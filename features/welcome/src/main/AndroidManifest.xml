@@ -3,10 +3,10 @@
 
     <application>
         <activity
-            android:name=".presentation.WelcomeActivity"
+            android:name=".presentation2.WelcomeActivity"
             android:exported="true" />
         <activity
-            android:name=".presentation.welcome.WelcomeActivity"
+            android:name=".presentation2.welcome.WelcomeActivity"
             android:exported="false" />
     </application>
 

@@ -6,7 +6,7 @@
     app:startDestination="@id/welcomeFragment">
     <fragment
         android:id="@+id/welcomeFragment"
-        android:name="com.locaspes.welcome.presentation.WelcomeFragment"
+        android:name="com.locaspes.presentation.welcome.WelcomeFragment"
         android:label="WelcomeFragment" >
         <action
             android:id="@+id/action_welcomeFragment_to_signUpFragment"
@@ -16,6 +16,21 @@
     </fragment>
     <fragment
         android:id="@+id/signUpFragment"
-        android:name="com.locaspes.sign_up.presentation.SignUpFragment"
-        android:label="SignUpFragment" />
+        android:name="com.locaspes.presentation.signup.SignUpFragment"
+        android:label="SignUpFragment" >
+        <action
+            android:id="@+id/action_signUpFragment_to_welcomeFragment"
+            app:destination="@id/welcomeFragment" />
+        <action
+            android:id="@+id/action_signUpFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/signInFragment"
+        android:name="com.locaspes.presentation.signin.SignInFragment"
+        android:label="SignInFragment" >
+        <action
+            android:id="@+id/action_signInFragment_to_signUpFragment"
+            app:destination="@id/signUpFragment" />
+    </fragment>
 </navigation>

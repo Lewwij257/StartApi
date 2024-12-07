@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "855616578071",
+    "firebase_url": "https://startapiapp-default-rtdb.firebaseio.com",
+    "project_id": "startapiapp",
+    "storage_bucket": "startapiapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:855616578071:android:b5da71c319692cf9643252",
+        "android_client_info": {
+          "package_name": "com.locaspes.testtask"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDk-Z2ZLQWhqAY-zB43TQYuS-h7odzu54E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

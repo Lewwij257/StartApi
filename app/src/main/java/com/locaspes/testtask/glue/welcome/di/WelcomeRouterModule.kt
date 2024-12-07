@@ -1,7 +1,7 @@
 package com.locaspes.testtask.glue.welcome.di
 
 import com.locaspes.testtask.glue.welcome.AdapterWelcomeRouter
-import com.locaspes.welcome.WelcomeRouter
+import com.locaspes.presentation.WelcomeRouter
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
