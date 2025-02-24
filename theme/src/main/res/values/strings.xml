@@ -1,0 +1,7 @@
+<resources>
+    <string name="title_activity_welcome">WelcomeActivity</string>
+    <string name="StartApi">StartApi</string>
+    <string name="StartApiBeta">StartApi Beta 1.0</string>
+    <string name="unite_create_conquer">unite create conquer</string>
+    <string name="title_activity_main">com.locaspes.home.MainActivity</string>
+</resources>

@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "570415612279",
+    "project_id": "startapi-global",
+    "storage_bucket": "startapi-global.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:570415612279:android:23ab3a502d2cbe7232a172",
+        "android_client_info": {
+          "package_name": "com.locaspes.startapi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmWUyui0gi128bk45FpZzK173QE01qghY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
