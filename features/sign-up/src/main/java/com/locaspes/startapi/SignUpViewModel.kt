@@ -3,7 +3,7 @@ package com.locaspes.startapi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.locaspes.utils.InputValidator
-//import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,9 +11,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-//@HiltViewModel
+@HiltViewModel
 //class SignUpViewModel @Inject constructor(private val signUpUseCase: SignUpUseCase): ViewModel() {
-class SignUpViewModel(private val signUpUseCase: SignUpUseCase): ViewModel() {
+class SignUpViewModel @Inject constructor(private val signUpUseCase: SignUpUseCase): ViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUiState())
     val uiState: StateFlow<SignUpUiState> = _uiState.asStateFlow()

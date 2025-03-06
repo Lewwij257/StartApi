@@ -2,8 +2,11 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.org.jetbrains.kotlin.android)
-    //id("com.google.devtools.ksp")
-    //alias(libs.plugins.hilt.android) apply false
+
+    //dagger.hilt
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
+
 }
 
 android {
@@ -42,7 +45,6 @@ dependencies {
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
-    //implementation(libs.material)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
     implementation(libs.androidx.ui)
@@ -53,15 +55,19 @@ dependencies {
     implementation(libs.hilt.android)
     implementation(libs.androidx.junit.ktx)
     androidTestImplementation(libs.testng)
-    //ksp(libs.hilt.android.compiler)
-    //implementation (libs.dagger)
-    //annotationProcessor (libs.dagger.compiler)
 
-    
-    //kapt("com.google.dagger:hilt-compiler:2.55")
     implementation(project(":data"))
     implementation(project(":theme"))
     implementation(project(":core"))
 
+    //dagger.hilt
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+
+
 }
+kapt {
+    correctErrorTypes = true
+}
+
 

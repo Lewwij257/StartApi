@@ -4,11 +4,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.locaspes.SignIn
+import com.locaspes.data.registration.FirebaseRegistrationRepository
 import com.locaspes.navigation.Screen
 import com.locaspes.startapi.SignUp
 import com.locaspes.startapi.SignUpUseCase
@@ -36,8 +38,8 @@ fun App(modifier: Modifier){
             }
             composable(Screen.SignUp.route){
                 SignUp(
-                    modifier= Modifier,
-                    viewModel = SignUpViewModel(signUpUseCase = SignUpUseCase(firebaseAuthRepository = com.locaspes.data.FirebaseAuthRepository())),
+                    modifier = Modifier,
+                    viewModel = SignUpViewModel(signUpUseCase = SignUpUseCase(firebaseAuthRepository = FirebaseRegistrationRepository())),
                     onLogInButtonClicked = {
                         navController.navigate(Screen.SignIn.route){
                             popUpTo(Screen.Welcome.route){
@@ -45,7 +47,9 @@ fun App(modifier: Modifier){
                             }
                         }
                     },
-                    onRegisterButtonClicked = {}
+                    onRegisterButtonClicked = {
+
+                    }
                 )
             }
             composable(Screen.SignIn.route){
@@ -69,4 +73,8 @@ fun WelcomePreview(){
     StellarisAppTheme {
         Welcome(onContinueButtonClicked = {})
     }
+}
+
+public fun onSignUpButtonClicked(viewModel: SignUpViewModel){
+    viewModel.signUp()
 }

@@ -29,7 +29,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.locaspes.data.FirebaseAuthRepository
+import com.locaspes.data.registration.FirebaseRegistrationRepository
 //import com.android.tools.screenshot.isValid
 import com.locaspes.stellaristheme.AppTypography
 import com.locaspes.stellaristheme.StellarisAppTheme
@@ -146,7 +146,7 @@ fun SignUp(
 
         TextField(
             value = uiState.password,
-            onValueChange = viewModel::updateUsername,
+            onValueChange = viewModel::updatePassword,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -180,7 +180,8 @@ fun SignUp(
         }
 
         Button(
-            onClick = viewModel::signUp,
+            //onClick = viewModel::signUp,
+            onClick = onRegisterButtonClicked,
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 36.dp)
                 .fillMaxWidth(),
@@ -221,7 +222,7 @@ fun SignUpDarkPreview() {
     StellarisAppTheme(darkTheme = false) {
         SignUp(modifier = Modifier, onLogInButtonClicked = {}, onRegisterButtonClicked = {}, viewModel = SignUpViewModel(
             SignUpUseCase(
-                firebaseAuthRepository = FirebaseAuthRepository()
+                firebaseAuthRepository = FirebaseRegistrationRepository()
             )
         )
         )
@@ -233,7 +234,7 @@ fun GreetingLightPreview() {
     StellarisAppTheme(darkTheme = true) {
         SignUp(onLogInButtonClicked = {}, onRegisterButtonClicked = {}, viewModel = SignUpViewModel(
             SignUpUseCase(
-                firebaseAuthRepository = FirebaseAuthRepository()
+                firebaseAuthRepository = FirebaseRegistrationRepository()
             )
         )
         )

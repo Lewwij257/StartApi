@@ -1,9 +1,9 @@
 package com.locaspes.startapi
 
-import com.locaspes.data.FirebaseAuthRepository
+import com.locaspes.data.registration.FirebaseRegistrationRepository
 import javax.inject.Inject
 
-//class SignUpUseCase @Inject constructor(private val firebaseAuthRepository: FirebaseAuthRepository) {
+//class SignUpUseCase @Inject constructor(private val firebaseAuthRepository: FirebaseRegistrationRepository) {
 //    //authRepository.signUp(email, username, password)
 //    suspend operator fun invoke(
 //        email: String,
@@ -13,7 +13,7 @@ import javax.inject.Inject
 //        return firebaseAuthRepository.signUp(email, username, password)
 //    }
 //}
-class SignUpUseCase (private val firebaseAuthRepository: FirebaseAuthRepository) {
+class SignUpUseCase @Inject constructor(private val firebaseAuthRepository: FirebaseRegistrationRepository) {
     //authRepository.signUp(email, username, password)
     suspend operator fun invoke(
         email: String,

@@ -2,9 +2,6 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.org.jetbrains.kotlin.android)
-    //id("com.google.devtools.ksp")
-    //alias(libs.plugins.hilt.android) apply false
-
 }
 
 android {

@@ -2,8 +2,10 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.org.jetbrains.kotlin.android)
-    id("com.google.devtools.ksp")
-    //alias(libs.plugins.hilt.android) apply false
+
+    //dagger.hilt
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -51,14 +53,15 @@ dependencies {
     implementation(libs.firebase.firestore)
     implementation(libs.firebase.storage)
 
-    implementation(libs.hilt.android)
-    ksp(libs.hilt.android.compiler)
-    //implementation (libs.dagger)
-    //annotationProcessor (libs.dagger.compiler)
 
-    implementation(platform(libs.androidx.compose.bom))  // Убедитесь, что BOM подключен
+    implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.runtime)
 
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 
+}
 
+kapt {
+    correctErrorTypes = true
 }
