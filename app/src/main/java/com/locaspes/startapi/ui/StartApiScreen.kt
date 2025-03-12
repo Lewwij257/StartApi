@@ -61,6 +61,10 @@ fun App(modifier: Modifier){
                             popUpTo(Screen.Welcome.route){inclusive=false}
                         }})
             }
+            composable(Screen.Home.route) {
+                HomeNavigation(
+                )
+            }
         }
     }
 
@@ -75,6 +79,3 @@ fun WelcomePreview(){
     }
 }
 
-public fun onSignUpButtonClicked(viewModel: SignUpViewModel){
-    viewModel.signUp()
-}

@@ -44,9 +44,6 @@ fun SignUp(
     onRegisterButtonClicked: () -> Unit,
     onLogInButtonClicked: () -> Unit) {
 
-    var email by remember { mutableStateOf("") }
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
 
     val uiState by viewModel.uiState.collectAsState()
 
