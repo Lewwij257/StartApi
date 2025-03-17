@@ -17,11 +17,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,7 +39,7 @@ import com.locaspes.stellaristheme.StellarisAppTheme
 fun SignUp(
     viewModel: SignUpViewModel,
     modifier: Modifier = Modifier,
-    onRegisterButtonClicked: () -> Unit,
+    onRegisterSuccess: () -> Unit,
     onLogInButtonClicked: () -> Unit) {
 
 
@@ -176,9 +174,15 @@ fun SignUp(
             )
         }
 
+        if (uiState.isSignUpSuccessful){
+            LaunchedEffect(Unit) {
+                onRegisterSuccess()
+            }
+        }
+
         Button(
             //onClick = viewModel::signUp,
-            onClick = onRegisterButtonClicked,
+            onClick = viewModel::signUp,
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 36.dp)
                 .fillMaxWidth(),
@@ -217,7 +221,7 @@ fun SignUp(
 @Composable
 fun SignUpDarkPreview() {
     StellarisAppTheme(darkTheme = false) {
-        SignUp(modifier = Modifier, onLogInButtonClicked = {}, onRegisterButtonClicked = {}, viewModel = SignUpViewModel(
+        SignUp(modifier = Modifier, onLogInButtonClicked = {}, onRegisterSuccess = {}, viewModel = SignUpViewModel(
             SignUpUseCase(
                 firebaseAuthRepository = FirebaseRegistrationRepository()
             )
@@ -229,7 +233,7 @@ fun SignUpDarkPreview() {
 @Composable
 fun GreetingLightPreview() {
     StellarisAppTheme(darkTheme = true) {
-        SignUp(onLogInButtonClicked = {}, onRegisterButtonClicked = {}, viewModel = SignUpViewModel(
+        SignUp(onLogInButtonClicked = {}, onRegisterSuccess = {}, viewModel = SignUpViewModel(
             SignUpUseCase(
                 firebaseAuthRepository = FirebaseRegistrationRepository()
             )

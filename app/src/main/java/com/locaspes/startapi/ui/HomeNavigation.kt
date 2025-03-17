@@ -23,6 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.locaspes.navigation.Screen
 import com.locaspes.ui.FeedScreen
+import com.locaspes.ui.FeedViewModel
 
 @Composable
 fun HomeNavigation(
@@ -62,7 +63,12 @@ fun HomeNavigation(
             startDestination = Screen.Feed.route,
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable(Screen.Feed.route) { FeedScreen() }
+            composable(Screen.Feed.route) {
+                FeedScreen(
+                    modifier = Modifier,
+                    viewModel = FeedViewModel(),
+                )
+            }
             //composable(Screen.Projects.route) { ProjectsScreen() }
             //composable(Screen.Messenger.route) { MessengerScreen() }
             //composable(Screen.Settings.route) { SettingsScreen() }

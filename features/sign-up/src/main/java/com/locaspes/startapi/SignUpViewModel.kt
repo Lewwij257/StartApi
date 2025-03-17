@@ -44,7 +44,7 @@ class SignUpViewModel @Inject constructor(private val signUpUseCase: SignUpUseCa
             _uiState.update { it.copy(isLoading = true) }
             try{
                 val isSuccess = signUpUseCase(email = _uiState.value.email, username = _uiState.value.username, password = _uiState.value.password )
-                _uiState.update { it.copy(isLoading = false, isSignUpSuccessful = true, errorMessage = null) }
+                _uiState.update { it.copy(isLoading = false, isSignUpSuccessful = isSuccess, errorMessage = null) }
             }
             catch (e: Exception){
                 _uiState.update { it.copy(isLoading = false, errorMessage = "Произошла какая-то ошибка! :(") }
