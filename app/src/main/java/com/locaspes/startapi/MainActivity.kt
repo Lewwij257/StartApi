@@ -13,8 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.locaspes.startapi.ui.App
 import com.locaspes.stellaristheme.StellarisAppTheme
 import com.locaspes.welcome.Welcome
-//import dagger.hilt.android.HiltAndroidApp
-//import dagger.hilt.components.SingletonComponent
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

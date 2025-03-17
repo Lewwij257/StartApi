@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.locaspes.SignIn
+import com.locaspes.data.registration.FirebaseRegistrationRepository
 import com.locaspes.navigation.Screen
 import com.locaspes.startapi.SignUp
 import com.locaspes.startapi.SignUpUseCase
@@ -36,8 +37,8 @@ fun App(modifier: Modifier){
             }
             composable(Screen.SignUp.route){
                 SignUp(
-                    modifier= Modifier,
-                    viewModel = SignUpViewModel(signUpUseCase = SignUpUseCase(firebaseAuthRepository = com.locaspes.data.FirebaseAuthRepository())),
+                    modifier = Modifier,
+                    viewModel = SignUpViewModel(signUpUseCase = SignUpUseCase(firebaseAuthRepository = FirebaseRegistrationRepository())),
                     onLogInButtonClicked = {
                         navController.navigate(Screen.SignIn.route){
                             popUpTo(Screen.Welcome.route){
@@ -45,7 +46,13 @@ fun App(modifier: Modifier){
                             }
                         }
                     },
-                    onRegisterButtonClicked = {}
+                    onRegisterSuccess = {
+                        navController.navigate(Screen.Home.route){
+                            popUpTo(Screen.Welcome.route){
+                                inclusive = false
+                            }
+                        }
+                    }
                 )
             }
             composable(Screen.SignIn.route){
@@ -56,6 +63,10 @@ fun App(modifier: Modifier){
                         navController.navigate(Screen.SignUp.route) {
                             popUpTo(Screen.Welcome.route){inclusive=false}
                         }})
+            }
+            composable(Screen.Home.route) {
+                HomeNavigation(
+                )
             }
         }
     }
@@ -70,3 +81,4 @@ fun WelcomePreview(){
         Welcome(onContinueButtonClicked = {})
     }
 }
+

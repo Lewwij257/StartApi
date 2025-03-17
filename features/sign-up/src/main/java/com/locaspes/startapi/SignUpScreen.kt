@@ -17,11 +17,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,7 +27,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.locaspes.data.FirebaseAuthRepository
+import com.locaspes.data.registration.FirebaseRegistrationRepository
 //import com.android.tools.screenshot.isValid
 import com.locaspes.stellaristheme.AppTypography
 import com.locaspes.stellaristheme.StellarisAppTheme
@@ -41,12 +39,9 @@ import com.locaspes.stellaristheme.StellarisAppTheme
 fun SignUp(
     viewModel: SignUpViewModel,
     modifier: Modifier = Modifier,
-    onRegisterButtonClicked: () -> Unit,
+    onRegisterSuccess: () -> Unit,
     onLogInButtonClicked: () -> Unit) {
 
-    var email by remember { mutableStateOf("") }
-    var username by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
 
     val uiState by viewModel.uiState.collectAsState()
 
@@ -146,7 +141,7 @@ fun SignUp(
 
         TextField(
             value = uiState.password,
-            onValueChange = viewModel::updateUsername,
+            onValueChange = viewModel::updatePassword,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -179,7 +174,14 @@ fun SignUp(
             )
         }
 
+        if (uiState.isSignUpSuccessful){
+            LaunchedEffect(Unit) {
+                onRegisterSuccess()
+            }
+        }
+
         Button(
+            //onClick = viewModel::signUp,
             onClick = viewModel::signUp,
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 36.dp)
@@ -219,9 +221,9 @@ fun SignUp(
 @Composable
 fun SignUpDarkPreview() {
     StellarisAppTheme(darkTheme = false) {
-        SignUp(modifier = Modifier, onLogInButtonClicked = {}, onRegisterButtonClicked = {}, viewModel = SignUpViewModel(
+        SignUp(modifier = Modifier, onLogInButtonClicked = {}, onRegisterSuccess = {}, viewModel = SignUpViewModel(
             SignUpUseCase(
-                firebaseAuthRepository = FirebaseAuthRepository()
+                firebaseAuthRepository = FirebaseRegistrationRepository()
             )
         )
         )
@@ -231,9 +233,9 @@ fun SignUpDarkPreview() {
 @Composable
 fun GreetingLightPreview() {
     StellarisAppTheme(darkTheme = true) {
-        SignUp(onLogInButtonClicked = {}, onRegisterButtonClicked = {}, viewModel = SignUpViewModel(
+        SignUp(onLogInButtonClicked = {}, onRegisterSuccess = {}, viewModel = SignUpViewModel(
             SignUpUseCase(
-                firebaseAuthRepository = FirebaseAuthRepository()
+                firebaseAuthRepository = FirebaseRegistrationRepository()
             )
         )
         )

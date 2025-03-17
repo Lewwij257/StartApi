@@ -1,10 +1,10 @@
-package com.locaspes.data
+package com.locaspes.data.registration
 
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
 
-class FirebaseAuthRepository: AuthRepository {
+class FirebaseRegistrationRepository: RegistrationRepository {
 
     private val dataBase = Firebase.firestore
 

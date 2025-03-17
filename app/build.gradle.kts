@@ -3,9 +3,11 @@ plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.org.jetbrains.kotlin.android)
     alias(libs.plugins.google.services)
-    //alias(libs.plugins.hilt.android)
-    //alias(libs.plugins.hilt.android) apply false
-    //id("dagger.hilt.android.plugin")
+
+    //dagger.hilt
+    id("kotlin-kapt")
+    id("com.google.dagger.hilt.android")
+
 }
 
 android {
@@ -63,12 +65,9 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
 
-
-//    implementation(libs.hilt.android)
-//    ksp(libs.hilt.android.compiler)
-
     implementation(project(":theme"))
     implementation(project(":data"))
+    implementation(project(":features:feed"))
     implementation(project(":features:sign-in"))
     implementation(project(":features:sign-up"))
     implementation(project(":features:welcome"))
@@ -77,4 +76,12 @@ dependencies {
 
     implementation(libs.javapoet)
 
+    //dagger.hilt
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+
+
+}
+kapt {
+    correctErrorTypes = true
 }

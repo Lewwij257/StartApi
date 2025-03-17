@@ -3,7 +3,7 @@ package com.locaspes.startapi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.locaspes.utils.InputValidator
-//import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,9 +11,9 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-//@HiltViewModel
+@HiltViewModel
 //class SignUpViewModel @Inject constructor(private val signUpUseCase: SignUpUseCase): ViewModel() {
-class SignUpViewModel(private val signUpUseCase: SignUpUseCase): ViewModel() {
+class SignUpViewModel @Inject constructor(private val signUpUseCase: SignUpUseCase): ViewModel() {
 
     private val _uiState = MutableStateFlow(SignUpUiState())
     val uiState: StateFlow<SignUpUiState> = _uiState.asStateFlow()
@@ -44,7 +44,7 @@ class SignUpViewModel(private val signUpUseCase: SignUpUseCase): ViewModel() {
             _uiState.update { it.copy(isLoading = true) }
             try{
                 val isSuccess = signUpUseCase(email = _uiState.value.email, username = _uiState.value.username, password = _uiState.value.password )
-                _uiState.update { it.copy(isLoading = false, isSignUpSuccessful = true, errorMessage = null) }
+                _uiState.update { it.copy(isLoading = false, isSignUpSuccessful = isSuccess, errorMessage = null) }
             }
             catch (e: Exception){
                 _uiState.update { it.copy(isLoading = false, errorMessage = "Произошла какая-то ошибка! :(") }
