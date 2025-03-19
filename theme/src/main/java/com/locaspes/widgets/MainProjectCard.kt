@@ -56,7 +56,7 @@ fun MainProjectCard(title: String,
     ) {
         Column(modifier = Modifier
             .padding(8.dp)
-            .background(MaterialTheme.colorScheme.onSurface)) {
+            .background(MaterialTheme.colorScheme.surface)) {
 
             Row (modifier = Modifier,
                 verticalAlignment = Alignment.CenterVertically) {
