@@ -25,6 +25,7 @@ import com.locaspes.data.model.ProjectCard
 
 import com.locaspes.stellaristheme.StellarisAppTheme
 import com.locaspes.theme.R
+import java.util.Date
 
 @Composable
 fun MainProjectCard(projectCard: ProjectCard,
@@ -105,11 +106,12 @@ fun CardPreview(){
                 name = "abyssExplore",
                 longDescription = "d",
                 shortDescription = "d",
-                technologies = arrayOf("ds", "d"),
-                lookingFor = arrayOf("dd","d"),
-                requiredSkills = arrayOf("d","d"),
-                author = "d"
-            )
+                technologies = listOf("ds", "d"),
+                lookingFor = listOf("dd", "d"),
+                requiredSkills = listOf("d", "d"),
+                author = "d",
+                createDate = Date()
+            )   
         )
     }
 }

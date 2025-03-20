@@ -54,6 +54,7 @@ dependencies {
 
     implementation(libs.hilt.android)
     implementation(libs.androidx.junit.ktx)
+    implementation(libs.firebase.firestore.ktx)
     androidTestImplementation(libs.testng)
 
     implementation(project(":data"))

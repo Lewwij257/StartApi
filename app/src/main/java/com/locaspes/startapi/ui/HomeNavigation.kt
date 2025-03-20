@@ -21,6 +21,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.locaspes.FeedUseCase
+import com.locaspes.data.feed.FirebaseFeedRepository
 import com.locaspes.navigation.Screen
 import com.locaspes.ui.FeedScreen
 import com.locaspes.ui.FeedViewModel
@@ -66,7 +68,7 @@ fun HomeNavigation(
             composable(Screen.Feed.route) {
                 FeedScreen(
                     modifier = Modifier,
-                    viewModel = FeedViewModel(),
+                    viewModel = FeedViewModel(feedUseCase = FeedUseCase(firebaseFeedRepository = FirebaseFeedRepository())),
                 )
             }
             //composable(Screen.Projects.route) { ProjectsScreen() }
