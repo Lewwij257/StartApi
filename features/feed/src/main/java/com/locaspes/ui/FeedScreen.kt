@@ -69,6 +69,7 @@ fun FeedScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxHeight()
+                .fillMaxWidth()
         ) {  }
 
     }
