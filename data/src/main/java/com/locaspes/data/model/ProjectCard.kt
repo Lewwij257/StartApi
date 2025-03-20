@@ -1,5 +1,7 @@
 package com.locaspes.data.model
 
+import java.util.Date
+
 data class ProjectCard(
     val id: String,
     val longDescription: String,
@@ -8,5 +10,6 @@ data class ProjectCard(
     val requiredSkills: Array<String>,
     val shortDescription: String,
     val technologies: Array<String>,
-    val author: String
+    val author: String,
+    val createDate: Date
 )

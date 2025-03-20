@@ -70,7 +70,9 @@ fun FeedScreen(
             modifier = Modifier
                 .fillMaxHeight()
                 .fillMaxWidth()
-        ) {  }
+        ) {
+
+        }
 
     }
 
