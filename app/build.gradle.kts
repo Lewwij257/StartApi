@@ -67,6 +67,9 @@ dependencies {
 
     implementation(project(":theme"))
     implementation(project(":data"))
+    implementation(project(":features:settings"))
+    implementation(project(":features:messenger"))
+    implementation(project(":features:projects"))
     implementation(project(":features:feed"))
     implementation(project(":features:sign-in"))
     implementation(project(":features:sign-up"))

@@ -1,7 +1,9 @@
 package com.locaspes.widgets
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -22,39 +24,43 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.locaspes.data.model.ProjectCard
-
 import com.locaspes.stellaristheme.StellarisAppTheme
 import com.locaspes.theme.R
 import java.util.Date
 
 @Composable
-fun MainProjectCard(projectCard: ProjectCard,
-                    modifier: Modifier = Modifier){
-
-    Card(modifier = Modifier
-        .fillMaxWidth()
-        .padding(16.dp),
-        elevation = CardDefaults.cardElevation(),
-        shape = RoundedCornerShape(8.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
-
+fun MainProjectCard(
+    projectCard: ProjectCard,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp), // Добавляем тень
+        shape = RoundedCornerShape(12.dp), // Увеличиваем радиус углов для современного вида
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface // Используем цвет поверхности из темы
+        ),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline) // Добавляем обводку
     ) {
-        Column(modifier = Modifier
-            .padding(8.dp)
-            .background(MaterialTheme.colorScheme.surface)) {
-
-            Row (modifier = Modifier,
-                verticalAlignment = Alignment.CenterVertically) {
+        Column(
+            modifier = Modifier
+                .padding(12.dp) // Увеличили внутренний отступ для воздуха
+                .background(MaterialTheme.colorScheme.surface) // Убедимся, что фон一致
+        ) {
+            Row(
+                modifier = Modifier,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 Text(
                     text = projectCard.name,
                     style = MaterialTheme.typography.titleLarge,
                     color = MaterialTheme.colorScheme.onSurface,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier
-                        .weight(1f)
+                    modifier = Modifier.weight(1f)
                 )
-
 
                 Image(
                     painter = painterResource(R.drawable.img_briefcase_selected),
@@ -69,49 +75,51 @@ fun MainProjectCard(projectCard: ProjectCard,
                         )
                         .aspectRatio(1f)
                 )
-
             }
 
-            Text(text = projectCard.technologies.toString(),
+            Text(
+                text = projectCard.technologies.joinToString(", "), // Улучшаем читаемость списка
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis)
+                overflow = TextOverflow.Ellipsis
+            )
 
-
-            Text(text = projectCard.shortDescription,
+            Text(
+                text = projectCard.shortDescription,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 3,
-                overflow = TextOverflow.Ellipsis)
+                overflow = TextOverflow.Ellipsis
+            )
 
-            Text(text = projectCard.lookingFor.toString(),
+            Text(
+                text = projectCard.lookingFor.joinToString(", "), // Улучшаем читаемость списка
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurface,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis
-                )
-
+            )
         }
     }
 }
 
 @Composable
 @Preview
-fun CardPreview(){
+fun CardPreview() {
     StellarisAppTheme {
         MainProjectCard(
             ProjectCard(
                 id = "d",
                 name = "abyssExplore",
                 longDescription = "d",
-                shortDescription = "d",
-                technologies = listOf("ds", "d"),
-                lookingFor = listOf("dd", "d"),
-                requiredSkills = listOf("d", "d"),
+                shortDescription = "Explore the depths of the abyss with this project.",
+                technologies = listOf("Kotlin", "Firebase"),
+                lookingFor = listOf("Developers", "Designers"),
+                requiredSkills = listOf("Android", "UI/UX"),
                 author = "d",
                 createDate = Date()
-            )   
+            )
         )
     }
 }

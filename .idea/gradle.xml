@@ -16,6 +16,9 @@
             <option value="$PROJECT_DIR$/features" />
             <option value="$PROJECT_DIR$/features/feed" />
             <option value="$PROJECT_DIR$/features/home" />
+            <option value="$PROJECT_DIR$/features/messenger" />
+            <option value="$PROJECT_DIR$/features/projects" />
+            <option value="$PROJECT_DIR$/features/settings" />
             <option value="$PROJECT_DIR$/features/sign-in" />
             <option value="$PROJECT_DIR$/features/sign-up" />
             <option value="$PROJECT_DIR$/features/welcome" />

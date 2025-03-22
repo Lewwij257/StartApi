@@ -23,7 +23,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.locaspes.FeedUseCase
 import com.locaspes.data.feed.FirebaseFeedRepository
+import com.locaspes.messenger.MessengerScreen
 import com.locaspes.navigation.Screen
+import com.locaspes.projects.ProjectScreen
+import com.locaspes.settings.SettingsScreen
 import com.locaspes.ui.FeedScreen
 import com.locaspes.ui.FeedViewModel
 
@@ -71,9 +74,12 @@ fun HomeNavigation(
                     viewModel = FeedViewModel(feedUseCase = FeedUseCase(firebaseFeedRepository = FirebaseFeedRepository())),
                 )
             }
-            //composable(Screen.Projects.route) { ProjectsScreen() }
-            //composable(Screen.Messenger.route) { MessengerScreen() }
-            //composable(Screen.Settings.route) { SettingsScreen() }
+            composable(Screen.Projects.route) {
+                ProjectScreen() }
+            composable(Screen.Messenger.route) {
+                MessengerScreen() }
+            composable(Screen.Settings.route) {
+                SettingsScreen() }
         }
     }
 }
