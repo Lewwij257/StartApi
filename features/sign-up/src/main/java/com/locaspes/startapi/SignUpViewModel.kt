@@ -30,6 +30,10 @@ class SignUpViewModel @Inject constructor(private val signUpUseCase: SignUpUseCa
         _uiState.update { it.copy(password = password, errorMessage = null) }
     }
 
+    fun debugFakeRegistration(){
+        _uiState.update { it.copy(isSignUpSuccessful = true) }
+    }
+
     fun signUp(){
         val currentUiState = _uiState.value
         if (!InputValidator().validateFields(

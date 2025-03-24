@@ -182,7 +182,7 @@ fun SignUp(
 
         Button(
             //onClick = viewModel::signUp,
-            onClick = viewModel::signUp,
+            onClick = {viewModel.debugFakeRegistration()},
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 36.dp)
                 .fillMaxWidth(),

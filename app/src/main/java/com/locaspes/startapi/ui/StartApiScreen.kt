@@ -23,7 +23,8 @@ fun App(modifier: Modifier){
     StellarisAppTheme {
         NavHost(
             navController = navController,
-            startDestination = Screen.Welcome.route
+            //TODO
+            startDestination = Screen.SignUp.route
         ) {
             composable(Screen.Welcome.route) {
                 

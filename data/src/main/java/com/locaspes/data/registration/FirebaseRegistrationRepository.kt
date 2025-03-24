@@ -1,5 +1,6 @@
 package com.locaspes.data.registration
 
+import android.util.Log
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.tasks.await
@@ -18,6 +19,7 @@ class FirebaseRegistrationRepository: RegistrationRepository {
                 "premium" to false
             )
             val documentReference = dataBase.collection("Users").add(newUser).await()
+            Log.d("RegistrationRepository","user added with ID: ${documentReference.id}")
             println("Пользователь добавлен с ID: ${documentReference.id}")
             return true
         }
