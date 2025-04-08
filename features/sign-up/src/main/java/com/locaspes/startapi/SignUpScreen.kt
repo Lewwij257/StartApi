@@ -1,5 +1,6 @@
 package com.locaspes.startapi
 
+import android.service.autofill.UserData
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,6 +28,8 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.locaspes.data.UserDataRepository
+import com.locaspes.data.UserDataStore
 import com.locaspes.data.registration.FirebaseRegistrationRepository
 //import com.android.tools.screenshot.isValid
 import com.locaspes.stellaristheme.AppTypography
@@ -180,9 +183,10 @@ fun SignUp(
             }
         }
 
+        //TODO: тест
         Button(
-            //onClick = viewModel::signUp,
             onClick = viewModel::signUp,
+            //onClick = {viewModel.debugFakeRegistration()},
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 36.dp)
                 .fillMaxWidth(),
@@ -217,27 +221,27 @@ fun SignUp(
     }
 }
 
-@Preview(showBackground = true)
-@Composable
-fun SignUpDarkPreview() {
-    StellarisAppTheme(darkTheme = false) {
-        SignUp(modifier = Modifier, onLogInButtonClicked = {}, onRegisterSuccess = {}, viewModel = SignUpViewModel(
-            SignUpUseCase(
-                firebaseAuthRepository = FirebaseRegistrationRepository()
-            )
-        )
-        )
-    }
-}
-@Preview(showBackground = true, widthDp = 320, heightDp = 600)
-@Composable
-fun GreetingLightPreview() {
-    StellarisAppTheme(darkTheme = true) {
-        SignUp(onLogInButtonClicked = {}, onRegisterSuccess = {}, viewModel = SignUpViewModel(
-            SignUpUseCase(
-                firebaseAuthRepository = FirebaseRegistrationRepository()
-            )
-        )
-        )
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun SignUpDarkPreview() {
+//    StellarisAppTheme(darkTheme = false) {
+//        SignUp(modifier = Modifier, onLogInButtonClicked = {}, onRegisterSuccess = {}, viewModel = SignUpViewModel(
+//            SignUpUseCase(
+//                firebaseAuthRepository = FirebaseRegistrationRepository(UserDataRepository())
+//            )
+//        )
+//        )
+//    }
+//}
+//@Preview(showBackground = true, widthDp = 320, heightDp = 600)
+//@Composable
+//fun GreetingLightPreview() {
+//    StellarisAppTheme(darkTheme = true) {
+//        SignUp(onLogInButtonClicked = {}, onRegisterSuccess = {}, viewModel = SignUpViewModel(
+//            SignUpUseCase(
+//                firebaseAuthRepository = FirebaseRegistrationRepository()
+//            )
+//        )
+//        )
+//    }
+//}

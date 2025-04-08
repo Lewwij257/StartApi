@@ -61,8 +61,11 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview.android)
     androidTestImplementation(libs.testng)
 
+    debugImplementation(libs.ui.tooling)
+
 
     implementation(project(":core"))
+    implementation(project(":data"))
 
 
 }

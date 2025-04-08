@@ -1,5 +1,6 @@
 package com.locaspes.data.registration
 
+import com.locaspes.data.UserDataRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -9,7 +10,9 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object FirebaseRegistrationModule {
     @Provides
-    fun provideFirebaseRegistrationRepository(): FirebaseRegistrationRepository {
-        return FirebaseRegistrationRepository()
+    fun provideFirebaseRegistrationRepository(
+        userDataRepository: UserDataRepository
+    ): FirebaseRegistrationRepository {
+        return FirebaseRegistrationRepository(userDataRepository)
     }
 }

@@ -13,15 +13,21 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.Popup
-import androidx.navigation.NavController
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.locaspes.FeedUseCase
+import com.locaspes.data.feed.FirebaseFeedRepository
+import com.locaspes.data.user.FirebaseUserActionsRepository
+import com.locaspes.messenger.MessengerScreen
 import com.locaspes.navigation.Screen
+import com.locaspes.projects.ProjectsScreen
+import com.locaspes.projects.ProjectsViewModel
+import com.locaspes.settings.SettingsScreen
 import com.locaspes.ui.FeedScreen
 import com.locaspes.ui.FeedViewModel
 
@@ -64,14 +70,18 @@ fun HomeNavigation(
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(Screen.Feed.route) {
-                FeedScreen(
-                    modifier = Modifier,
-                    viewModel = FeedViewModel(),
-                )
+                val viewModel: FeedViewModel = hiltViewModel()
+                FeedScreen(viewModel = viewModel)
             }
-            //composable(Screen.Projects.route) { ProjectsScreen() }
-            //composable(Screen.Messenger.route) { MessengerScreen() }
-            //composable(Screen.Settings.route) { SettingsScreen() }
+            composable(Screen.Projects.route) {
+                val viewModel: ProjectsViewModel = hiltViewModel()
+                ProjectsScreen(
+                    viewModel = viewModel
+                ) }
+            composable(Screen.Messenger.route) {
+                MessengerScreen() }
+            composable(Screen.Settings.route) {
+                SettingsScreen() }
         }
     }
 }

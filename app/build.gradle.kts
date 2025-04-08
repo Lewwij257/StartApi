@@ -67,6 +67,9 @@ dependencies {
 
     implementation(project(":theme"))
     implementation(project(":data"))
+    implementation(project(":features:settings"))
+    implementation(project(":features:messenger"))
+    implementation(project(":features:projects"))
     implementation(project(":features:feed"))
     implementation(project(":features:sign-in"))
     implementation(project(":features:sign-up"))
@@ -79,6 +82,9 @@ dependencies {
     //dagger.hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
 
 }
