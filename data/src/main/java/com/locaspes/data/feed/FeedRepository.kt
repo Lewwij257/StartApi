@@ -11,4 +11,6 @@ interface FeedRepository {
     fun getAllProjects(): Flow<List<ProjectCard>>
 
     fun getProjectsPaginated(lastDocument: DocumentSnapshot?): Flow<List<ProjectCard>>
+
+    fun getUserRelatedProjects(): Flow<List<ProjectCard>>
 }

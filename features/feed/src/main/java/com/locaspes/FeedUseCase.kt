@@ -1,12 +1,14 @@
 package com.locaspes
 
+import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.locaspes.data.feed.FirebaseFeedRepository
 import com.locaspes.data.model.ProjectCard
+import com.locaspes.data.user.FirebaseUserActionsRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class FeedUseCase @Inject constructor(private val firebaseFeedRepository: FirebaseFeedRepository) {
+class FeedUseCase @Inject constructor(private val firebaseFeedRepository: FirebaseFeedRepository, private val firebaseUserActionsRepository: FirebaseUserActionsRepository) {
 
     private var lastDocument: DocumentSnapshot? = null
     private var hasMoreData: Boolean = true
@@ -29,6 +31,14 @@ class FeedUseCase @Inject constructor(private val firebaseFeedRepository: Fireba
     fun resetPagination(){
         lastDocument = null
         hasMoreData = true
+    }
+
+    suspend fun checkIfUserAppliedToProject(currentUserId: String, projectId: String): Boolean{
+        return firebaseUserActionsRepository.checkUserAppliedToProject(currentUserId, projectId)
+    }
+
+    suspend fun applyUserToProject(currentUserId: String, projectId: String): Boolean{
+        return firebaseUserActionsRepository.addApplicationToProject(currentUserId, projectId)
     }
 
 }

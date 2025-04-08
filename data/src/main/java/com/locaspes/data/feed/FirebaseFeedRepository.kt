@@ -3,18 +3,21 @@ package com.locaspes.data.feed
 import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.locaspes.data.UserDataRepository
 import com.locaspes.data.model.ProjectCard
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
+import javax.inject.Inject
 
-class FirebaseFeedRepository: FeedRepository {
+class FirebaseFeedRepository @Inject constructor(
+    private val userDataRepository: UserDataRepository) : FeedRepository {
 
     val querySize = 10
 
     private val projectsDatabaseRef = FirebaseFirestore.getInstance().collection("Projects")
+    private val usersDatabaseRef = FirebaseFirestore.getInstance().collection("Users")
 
     override fun getAllProjects(): Flow<List<ProjectCard>> = flow {
         try{
@@ -26,6 +29,37 @@ class FirebaseFeedRepository: FeedRepository {
         }
         catch (e: Exception){
             throw e
+        }
+    }
+
+    override fun getUserRelatedProjects(): Flow<List<ProjectCard>> = flow {
+        try {
+            val userId = userDataRepository.getUserId().first()
+            Log.d("FirebaseFeedRepositoryDebug", "userId: $userId")
+            val userDocumentSnapshot = usersDatabaseRef.document(userId.toString()).get().await()
+            val createdProjectsList = userDocumentSnapshot.get("projects_created") as? List<String> ?: emptyList()
+            Log.d("FirebaseFeedRepositoryDebug", "Created projects: $createdProjectsList")
+            val acceptedProjectsList = userDocumentSnapshot.get("projects_accepted") as? List<String> ?: emptyList()
+            Log.d("FirebaseFeedRepositoryDebug", "accepted projects: $acceptedProjectsList")
+            val applicationsProjectsList = userDocumentSnapshot.get("projects_applications") as? List<String> ?: emptyList()
+            Log.d("FirebaseFeedRepositoryDebug", "applied projects: $applicationsProjectsList")
+
+            //only ID's in this list
+            val userRelatedProjects = createdProjectsList + acceptedProjectsList + applicationsProjectsList
+
+            if (userRelatedProjects.isNotEmpty()){
+                val projectsSnapshot = projectsDatabaseRef.whereIn("id", userRelatedProjects).get().await()
+                val projects = projectsSnapshot.documents.mapNotNull { documentSnapshot ->
+                    documentSnapshot.toObject(ProjectCard::class.java)?.copy(id = documentSnapshot.id)
+                }
+                Log.d("FirebaseFeedRepositoryDebug", "projects: $projects")
+                emit(projects)
+        }
+            else
+                emit(emptyList())
+    }
+        catch (e: Exception){
+            Log.d("FirebaseFeedRepository", "getUserRelatedProjects error")
         }
     }
 

@@ -9,5 +9,6 @@ data class FeedUiState (
     val isSuccess: Boolean = true,
     val errorMessage: String? = "",
     val projects: List<ProjectCard> = emptyList(),
-    val hasMoreData: Boolean = false
+    val hasMoreData: Boolean = false,
+    val canApply: Boolean? = null
     )

@@ -1,5 +1,8 @@
 package com.locaspes.data.feed
 
+import androidx.datastore.core.DataStore
+import com.locaspes.data.UserDataRepository
+import com.locaspes.data.UserDataStore
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -9,7 +12,7 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object FirebaseFeedModule {
     @Provides
-    fun provideFirebaseFeedRepository(): FirebaseFeedRepository{
-        return FirebaseFeedRepository()
+    fun provideFirebaseFeedRepository(userDataRepository: UserDataRepository): FirebaseFeedRepository{
+        return FirebaseFeedRepository(userDataRepository)
     }
 }

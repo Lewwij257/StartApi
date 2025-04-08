@@ -1,20 +1,24 @@
 package com.locaspes.ui
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.DocumentSnapshot
 import com.locaspes.FeedUseCase
+import com.locaspes.data.UserDataRepository
+import com.locaspes.data.user.FirebaseUserActionsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase): ViewModel(){
+class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, private val userDataRepository: UserDataRepository): ViewModel(){
 
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
@@ -25,6 +29,9 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase): V
         loadProjects()
     }
 
+    fun updateCanApply(canApply: Boolean?){
+        _uiState.update { it.copy(canApply = canApply) }
+    }
 
     fun updateSearch(searchText: String){
         _uiState.update { it.copy(search = searchText) }
@@ -56,6 +63,25 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase): V
                     }
                     isLoading = false
                 }
+        }
+    }
+
+    fun changeCanApplyState(projectId: String){
+        viewModelScope.launch {
+            try{
+                _uiState.update { it.copy( canApply = !(feedUseCase.checkIfUserAppliedToProject(userDataRepository.getUserId().first()!!, projectId))) }
+                Log.d("FirebaseUserActionsRepository", uiState.value.canApply.toString())
+            }
+            catch (e: Exception){
+                throw e
+            }
+        }
+    }
+
+    fun applyUserToProject(projectId: String){
+        viewModelScope.launch {
+            feedUseCase.applyUserToProject(userDataRepository.getUserId().first()!!, projectId)
+            changeCanApplyState(projectId)
         }
     }
 
