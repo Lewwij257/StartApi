@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -54,12 +55,16 @@ fun FeedScreen(viewModel: FeedViewModel){
     val scope = rememberCoroutineScope()
     val uiState by viewModel.uiState.collectAsState()
 
+    //10 readings!!! too much for screen switch
+//    LaunchedEffect(Unit) {
+//        viewModel.loadProjects()
+//    }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
     ) {
-        
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -108,7 +113,6 @@ fun FeedScreen(viewModel: FeedViewModel){
 
 
         if (selectedProject!=null){
-
             LaunchedEffect(Unit) {
                 scope.launch { viewModel.changeCanApplyState(selectedProject!!.id) }
             }
@@ -144,13 +148,15 @@ fun FeedScreen(viewModel: FeedViewModel){
                             }
                         false ->
                             Button(
-                                onClick = {},
+                                onClick = {
+                                    viewModel.cancelUserApplication(selectedProject!!.id)
+                                },
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .padding(10.dp),
-                                enabled = false
+                                colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error)
                             ){
-                            Text("Успешно!")
+                            Text("Отменить заявку")
                         }
                         null -> Button(
                             onClick = {},

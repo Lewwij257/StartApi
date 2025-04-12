@@ -1,5 +1,6 @@
 package com.locaspes.data.user
 
+import com.locaspes.data.UserDataRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -9,7 +10,10 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 object FirebaseUserActionsModule {
     @Provides
-    fun provideFirebaseUserActionsRepository(): FirebaseUserActionsRepository{
-        return FirebaseUserActionsRepository()
+    fun provideFirebaseUserActionsRepository(
+        userDataRepository: UserDataRepository
+    ): FirebaseUserActionsRepository{
+
+        return FirebaseUserActionsRepository(userDataRepository)
     }
 }

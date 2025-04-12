@@ -81,7 +81,16 @@ fun HomeNavigation(
             composable(Screen.Messenger.route) {
                 MessengerScreen() }
             composable(Screen.Settings.route) {
-                SettingsScreen() }
+                SettingsScreen(
+                    onLogoutClick = {
+                        //TODO:
+                        navController.navigate(Screen.SignUp.route){
+                            popUpTo(0){
+                                inclusive = true
+                            }
+                        }
+                    }
+                ) }
         }
     }
 }

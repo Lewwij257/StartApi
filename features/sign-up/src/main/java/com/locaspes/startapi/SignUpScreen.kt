@@ -35,47 +35,44 @@ import com.locaspes.data.registration.FirebaseRegistrationRepository
 import com.locaspes.stellaristheme.AppTypography
 import com.locaspes.stellaristheme.StellarisAppTheme
 
-
-
-
 @Composable
 fun SignUp(
     viewModel: SignUpViewModel,
-    modifier: Modifier = Modifier,
     onRegisterSuccess: () -> Unit,
     onLogInButtonClicked: () -> Unit) {
 
-
     val uiState by viewModel.uiState.collectAsState()
-
-
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.background)
-            ){
+    ) {
 
-        Text(text = "Регистрация",
+        Text(
+            text = "Регистрация",
             style = AppTypography.titleLarge,
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(20.dp)
                 .padding(bottom = 30.dp, top = 10.dp),
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 40.sp)
+            fontSize = 40.sp
+        )
 
-        Text(text = "Имя пользователя",
+        Text(
+            text = "Имя пользователя",
             style = AppTypography.bodyLarge,
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(start = 20.dp),
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 20.sp)
+            fontSize = 20.sp
+        )
 
         TextField(
             value = uiState.username,
-            onValueChange = viewModel::updateUsername ,
+            onValueChange = viewModel::updateUsername,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)
@@ -92,7 +89,6 @@ fun SignUp(
             placeholder = {
                 Text(
                     text = "username",
-                    //color = Color.White.copy(alpha = 0.7f)
                     color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
                 )
             },
@@ -100,13 +96,15 @@ fun SignUp(
                 keyboardType = KeyboardType.Text
             )
         )
-        Text(text = "Email",
+        Text(
+            text = "Email",
             style = AppTypography.bodyLarge,
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(start = 20.dp),
             color = MaterialTheme.colorScheme.onBackground,
-            fontSize = 20.sp)
+            fontSize = 20.sp
+        )
 
         TextField(
             value = uiState.email,
@@ -134,13 +132,15 @@ fun SignUp(
                 keyboardType = KeyboardType.Text
             )
         )
-        Text(text = "Пароль",
+        Text(
+            text = "Пароль",
             modifier = Modifier
                 .align(Alignment.Start)
                 .padding(start = 20.dp),
             color = MaterialTheme.colorScheme.onBackground,
             style = AppTypography.bodyLarge,
-            fontSize = 20.sp)
+            fontSize = 20.sp
+        )
 
         TextField(
             value = uiState.password,
@@ -177,7 +177,7 @@ fun SignUp(
             )
         }
 
-        if (uiState.isSignUpSuccessful){
+        if (uiState.isSignUpSuccessful) {
             LaunchedEffect(Unit) {
                 onRegisterSuccess()
             }
@@ -193,55 +193,34 @@ fun SignUp(
             enabled = !uiState.isLoading
         ) {
             Text(
-                "Продолжить", fontSize = 20.sp)
+                "Продолжить", fontSize = 20.sp
+            )
         }
-
 
         Spacer(modifier = Modifier.weight(1f))
 
-        Row(modifier = Modifier
-            .padding(20.dp)
-            .align(alignment = Alignment.CenterHorizontally))
+        Row(
+            modifier = Modifier
+                .padding(20.dp)
+                .align(alignment = Alignment.CenterHorizontally)
+        )
         {
             Text(
                 modifier = Modifier.align(alignment = Alignment.CenterVertically),
                 text = "Уже есть аккаунт? ",
                 color = MaterialTheme.colorScheme.onBackground,
-                fontSize = 16.sp)
+                fontSize = 16.sp
+            )
 
             TextButton(
                 onClick = onLogInButtonClicked,
             ) {
                 Text(
-                    "Войти")
+                    "Войти"
+                )
             }
         }
 
 
     }
 }
-
-//@Preview(showBackground = true)
-//@Composable
-//fun SignUpDarkPreview() {
-//    StellarisAppTheme(darkTheme = false) {
-//        SignUp(modifier = Modifier, onLogInButtonClicked = {}, onRegisterSuccess = {}, viewModel = SignUpViewModel(
-//            SignUpUseCase(
-//                firebaseAuthRepository = FirebaseRegistrationRepository(UserDataRepository())
-//            )
-//        )
-//        )
-//    }
-//}
-//@Preview(showBackground = true, widthDp = 320, heightDp = 600)
-//@Composable
-//fun GreetingLightPreview() {
-//    StellarisAppTheme(darkTheme = true) {
-//        SignUp(onLogInButtonClicked = {}, onRegisterSuccess = {}, viewModel = SignUpViewModel(
-//            SignUpUseCase(
-//                firebaseAuthRepository = FirebaseRegistrationRepository()
-//            )
-//        )
-//        )
-//    }
-//}
