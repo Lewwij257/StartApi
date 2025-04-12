@@ -34,11 +34,15 @@ class FeedUseCase @Inject constructor(private val firebaseFeedRepository: Fireba
     }
 
     suspend fun checkIfUserAppliedToProject(currentUserId: String, projectId: String): Boolean{
-        return firebaseUserActionsRepository.checkUserAppliedToProject(currentUserId, projectId)
+        return firebaseUserActionsRepository.checkUserAppliedToProject(projectId)
     }
 
     suspend fun applyUserToProject(currentUserId: String, projectId: String): Boolean{
-        return firebaseUserActionsRepository.addApplicationToProject(currentUserId, projectId)
+        return firebaseUserActionsRepository.addApplicationToProject(projectId)
+    }
+
+    suspend fun cancelUserApplication(projectId: String): Boolean{
+        return firebaseUserActionsRepository.cancelUserApplication(projectId)
     }
 
 }

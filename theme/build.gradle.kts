@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.junit.ktx)
     implementation(libs.androidx.ui.text.google.fonts)
     implementation(libs.androidx.ui.tooling.preview.android)
+    implementation(libs.firebase.common.ktx)
     androidTestImplementation(libs.testng)
 
     debugImplementation(libs.ui.tooling)

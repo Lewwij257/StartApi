@@ -117,8 +117,7 @@ fun CardPreview() {
                 technologies = listOf("Kotlin", "Firebase"),
                 lookingFor = listOf("Developers", "Designers"),
                 requiredSkills = listOf("Android", "UI/UX"),
-                author = "d",
-                createDate = Date()
+                author = "d"
             )
         )
     }

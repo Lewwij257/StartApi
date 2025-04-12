@@ -80,8 +80,18 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
 
     fun applyUserToProject(projectId: String){
         viewModelScope.launch {
+            _uiState.update{it.copy(canApply = null)}
             feedUseCase.applyUserToProject(userDataRepository.getUserId().first()!!, projectId)
             changeCanApplyState(projectId)
+        }
+    }
+
+    fun cancelUserApplication(projectId: String){
+        viewModelScope.launch {
+            _uiState.update{it.copy(canApply = null)}
+            feedUseCase.cancelUserApplication(projectId)
+            changeCanApplyState(projectId)
+
         }
     }
 

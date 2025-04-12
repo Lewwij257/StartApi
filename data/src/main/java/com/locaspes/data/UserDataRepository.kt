@@ -13,7 +13,7 @@ class UserDataRepository @Inject constructor(private val userDataStore: UserData
         userDataStore.clearUserId()
     }
 
-    fun getUserId(): Flow<String?>{
+    suspend fun getUserId(): Flow<String?>{
         return userDataStore.userId
     }
 }

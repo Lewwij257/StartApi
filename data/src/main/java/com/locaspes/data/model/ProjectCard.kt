@@ -1,15 +1,16 @@
 package com.locaspes.data.model
 
+import com.google.firebase.Timestamp
 import java.util.Date
 
 data class ProjectCard(
-    val id: String = "",
+    var id: String = "",
+    val name: String = "",
+    val shortDescription: String = "",
     val longDescription: String = "",
     val lookingFor: List<String> = emptyList(),
-    val name: String = "",
     val requiredSkills: List<String> = emptyList(),
-    val shortDescription: String = "",
     val technologies: List<String> = emptyList(),
-    val author: String = "",
-    val createDate: Date = Date()
+    var author: String = "",
+    var createDate: Timestamp = Timestamp.now()
 )

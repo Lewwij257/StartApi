@@ -32,7 +32,7 @@ class FirebaseFeedRepository @Inject constructor(
         }
     }
 
-    override fun getUserRelatedProjects(): Flow<List<ProjectCard>> = flow {
+    override fun getUserRelatedProjects(): Flow<List<List<ProjectCard>>> = flow {
         try {
             val userId = userDataRepository.getUserId().first()
             Log.d("FirebaseFeedRepositoryDebug", "userId: $userId")
@@ -45,13 +45,31 @@ class FirebaseFeedRepository @Inject constructor(
             Log.d("FirebaseFeedRepositoryDebug", "applied projects: $applicationsProjectsList")
 
             //only ID's in this list
-            val userRelatedProjects = createdProjectsList + acceptedProjectsList + applicationsProjectsList
+            val userRelatedProjects = listOf(createdProjectsList, acceptedProjectsList, applicationsProjectsList)
 
-            if (userRelatedProjects.isNotEmpty()){
-                val projectsSnapshot = projectsDatabaseRef.whereIn("id", userRelatedProjects).get().await()
-                val projects = projectsSnapshot.documents.mapNotNull { documentSnapshot ->
-                    documentSnapshot.toObject(ProjectCard::class.java)?.copy(id = documentSnapshot.id)
-                }
+            if (userRelatedProjects.any{it.isNotEmpty()}){
+                val projectsCreated = if (userRelatedProjects[0].isNotEmpty()){
+                    projectsDatabaseRef.whereIn("id", userRelatedProjects[0]).get().await()
+                        .documents.mapNotNull { documentSnapshot ->
+                            documentSnapshot.toObject(ProjectCard::class.java)?.copy(id = documentSnapshot.id)
+                        }
+                } else emptyList()
+
+                val projectsAccepted = if (userRelatedProjects[1].isNotEmpty()){
+                    projectsDatabaseRef.whereIn("id", userRelatedProjects[1]).get().await()
+                        .documents.mapNotNull { documentSnapshot ->
+                            documentSnapshot.toObject(ProjectCard::class.java)?.copy(id = documentSnapshot.id)
+                        }
+                } else emptyList()
+
+                val projectsApplied = if (userRelatedProjects[2].isNotEmpty()){
+                    projectsDatabaseRef.whereIn("id", userRelatedProjects[2]).get().await()
+                        .documents.mapNotNull { documentSnapshot ->
+                            documentSnapshot.toObject(ProjectCard::class.java)?.copy(id = documentSnapshot.id)
+                        }
+                } else emptyList()
+
+                val projects = listOf(projectsCreated, projectsAccepted, projectsApplied)
                 Log.d("FirebaseFeedRepositoryDebug", "projects: $projects")
                 emit(projects)
         }
