@@ -21,7 +21,8 @@ fun StandardTextField(
     onValueChange: (String) -> Unit,
     placeholderText: String = "введите текст",
     keyboardType: KeyboardType = KeyboardType.Text,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    singleLine: Boolean = false
 ) {
     TextField(
         value = value,

@@ -51,7 +51,6 @@ fun App(modifier: Modifier){
                     composable(Screen.SignUp.route){
                         val signUpViewModel: SignUpViewModel = hiltViewModel()
                         SignUp(
-                            modifier = Modifier,
                             viewModel = signUpViewModel,
                             onLogInButtonClicked = {
                                 navController.navigate(Screen.SignIn.route){

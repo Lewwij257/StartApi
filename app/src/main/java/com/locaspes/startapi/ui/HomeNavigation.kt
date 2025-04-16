@@ -28,6 +28,7 @@ import com.locaspes.navigation.Screen
 import com.locaspes.projects.ProjectsScreen
 import com.locaspes.projects.ProjectsViewModel
 import com.locaspes.settings.SettingsScreen
+import com.locaspes.settings.SettingsViewModel
 import com.locaspes.ui.FeedScreen
 import com.locaspes.ui.FeedViewModel
 
@@ -81,16 +82,21 @@ fun HomeNavigation(
             composable(Screen.Messenger.route) {
                 MessengerScreen() }
             composable(Screen.Settings.route) {
+                val viewModel: SettingsViewModel = hiltViewModel()
                 SettingsScreen(
+                    viewModel = viewModel,
                     onLogoutClick = {
-                        //TODO:
-                        navController.navigate(Screen.SignUp.route){
-                            popUpTo(0){
+                        navController.navigate(Screen.SignUp.route) {
+                            popUpTo(0) {
                                 inclusive = true
                             }
                         }
-                    }
+                    },
                 ) }
+
+            composable(Screen.SignUp.route) {
+                App(modifier = Modifier)
+            }
         }
     }
 }

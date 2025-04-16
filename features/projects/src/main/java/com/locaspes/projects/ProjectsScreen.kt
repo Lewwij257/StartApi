@@ -82,6 +82,7 @@ fun ProjectsScreen(viewModel: ProjectsViewModel) {
                 showCreateSheet = false
             }
             false -> snackBarHostState.showSnackbar("Ошибка!")
+            //TODO:
             null -> {}
         }
     }
@@ -105,7 +106,6 @@ fun ProjectsScreen(viewModel: ProjectsViewModel) {
                 .padding(paddingValues)
         ) {
             LazyColumn(modifier = Modifier.padding(10.dp)) {
-
                 item {
                     OutlinedButton(
                         onClick = {

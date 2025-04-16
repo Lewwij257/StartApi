@@ -29,7 +29,7 @@ class MainActivity: ComponentActivity() {
         setContent {
             StellarisAppTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    com.locaspes.startapi.ui.App(
+                    App(
                         modifier = Modifier.padding(innerPadding))
                 }
             }

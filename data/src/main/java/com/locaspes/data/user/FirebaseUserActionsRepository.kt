@@ -1,12 +1,15 @@
 package com.locaspes.data.user
 
 import android.util.Log
+import com.google.firebase.FirebaseException
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.auth.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.locaspes.data.UserDataRepository
 import com.locaspes.data.model.ProjectCard
+import com.locaspes.data.model.UserProfile
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -66,6 +69,21 @@ class FirebaseUserActionsRepository @Inject constructor(
         }
         catch (e: Exception){
             return false
+        }
+    }
+
+    override suspend fun getUserProfile(userId: String): Result<UserProfile> {
+        return try {
+            val snapshot = dataBase.collection("Users").document(userId).get().await()
+            if (snapshot.exists()){
+                Result.success(snapshot.toObject(UserProfile::class.java) ?: UserProfile())
+            }
+            else{
+                Result.failure(IllegalStateException("Документ пользователя с ID $userId не найден"))
+            }
+        }
+        catch (e: Exception){
+            Result.failure(FirebaseException("Ошибка при загрузке профиля: ${e.message}", e))
         }
     }
 }
