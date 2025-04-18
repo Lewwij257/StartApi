@@ -62,6 +62,20 @@ dependencies {
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
+    //cloudinary
+    // Cloudinary Android SDK
+    implementation("com.cloudinary:cloudinary-android:3.0.2")
+    // Coil для загрузки изображений в Compose
+    implementation("io.coil-kt:coil-compose:2.7.0")
+    // Для выбора файлов (опционально)
+    implementation("androidx.activity:activity-compose:1.9.0")
+
+    implementation("id.zelory:compressor:3.0.1")
+
+
+
+    implementation(project(":core"))
+
 
 
 }

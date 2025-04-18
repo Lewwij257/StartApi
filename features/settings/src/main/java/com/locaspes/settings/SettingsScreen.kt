@@ -1,5 +1,8 @@
 package com.locaspes.settings
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,6 +16,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -32,6 +36,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -48,6 +53,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil3.compose.rememberAsyncImagePainter
 import com.google.firebase.firestore.remote.Datastore
 import com.locaspes.data.UserDataRepository
 import com.locaspes.data.UserDataStore
@@ -63,10 +69,19 @@ fun SettingsScreen(
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
-
-    val sheetState = rememberModalBottomSheetState()
+    val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var showEditProfileSheet by remember { mutableStateOf(false) }
     val snackBarHostState = remember { SnackbarHostState() }
+    val imagePicker = rememberLauncherForActivityResult(ActivityResultContracts.GetContent()) {
+        uri: Uri? ->
+        uri?.let { viewModel.uploadProfileAvatar(it) }
+    }
+
+    LaunchedEffect(uiState.errorMessage) {
+        uiState.errorMessage?.let { error ->
+            viewModel.clearErrorMessage()
+        }
+    }
 
     //TODO:
     Scaffold(
@@ -82,17 +97,18 @@ fun SettingsScreen(
         ) {
             // Информация о пользователе
             UserInfoSection(
-                nickname = "userNickname",
-                userId = "userId",
+                nickname = uiState.profileName,
+                userId = uiState.profileId,
                 onEditProfileClick = {
                     showEditProfileSheet = true
-                }
+                },
+                uiState = uiState
             )
 
             if (showEditProfileSheet){
                 ModalBottomSheet(
                     onDismissRequest = {showEditProfileSheet = false},
-                    sheetState = rememberModalBottomSheetState(),
+                    sheetState = sheetState,
                     modifier = Modifier
                 ) {
 
@@ -109,7 +125,8 @@ fun SettingsScreen(
                     EditProfileSheet(
                         viewModel = viewModel,
                         uiState = uiState,
-                        onDismiss = {showEditProfileSheet = false})
+                        onDismiss = {showEditProfileSheet = false},
+                        onAvatarClick = {imagePicker.launch("image/*")})
                 }
             }
 
@@ -129,7 +146,8 @@ fun SettingsScreen(
 fun UserInfoSection(
     nickname: String,
     userId: String,
-    onEditProfileClick: () -> Unit
+    onEditProfileClick: () -> Unit,
+    uiState: SettingsUiState
 ) {
     Row(
         modifier = Modifier
@@ -139,7 +157,11 @@ fun UserInfoSection(
     ) {
         // Аватар
         Image(
-            painter = painterResource(id = R.drawable.img_profile_selected), // Замени на свой ресурс
+            painter = if (uiState.profileAvatarURL.isNotBlank()) {
+                rememberAsyncImagePainter(uiState.profileAvatarURL)
+            } else {
+                painterResource(id = R.drawable.img_profile_selected)
+            },
             contentDescription = "Аватар пользователя",
             modifier = Modifier
                 .size(64.dp)
@@ -160,7 +182,7 @@ fun UserInfoSection(
             )
             Text(
                 text = "id: $userId",
-                fontSize = 14.sp,
+                fontSize = 10.sp,
                 color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
             )
         }
@@ -253,29 +275,32 @@ fun SettingsSection(
 fun EditProfileSheet(
     viewModel: SettingsViewModel,
     uiState: SettingsUiState,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onAvatarClick: () -> Unit
 ) {
     Column(
 
         modifier = Modifier
             .fillMaxWidth()
+            .imePadding()
             .padding(16.dp)
             .verticalScroll(rememberScrollState())
             .padding(bottom = 32.dp), // Дополнительный отступ снизу для клавиатуры
-        //verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
 
         Image(
+            painter = if (uiState.profileAvatarURL.isNotBlank()){
+                rememberAsyncImagePainter(uiState.profileAvatarURL)
+            } else painterResource(id = R.drawable.img_profile),
             //TODO: аватар из профиля должен браться
             modifier = Modifier
                 .padding(bottom = 20.dp)
                 .size(80.dp)
                 .clip(CircleShape)
                 //TODO: логика замены фото профиля
-                .clickable {  }
+                .clickable { onAvatarClick() }
                 .background(MaterialTheme.colorScheme.surfaceVariant)
                 .align(Alignment.CenterHorizontally),
-            painter = painterResource(id = R.drawable.img_profile),
             contentDescription = "аватар",
 
         )
@@ -300,6 +325,19 @@ fun EditProfileSheet(
             value = uiState.profileDescription,
             onValueChange = viewModel::updateProfileDescription,
             placeholderText = "Расскажите о себе",
+            keyboardType = KeyboardType.Text,
+            singleLine = false,
+            modifier = Modifier.height(100.dp)
+        )
+
+        Text(
+            text = "Специальность:",
+            style = MaterialTheme.typography.titleMedium
+        )
+        StandardTextField(
+            value = uiState.profession,
+            onValueChange = viewModel::updateProfession,
+            placeholderText = "Программист/Дизайнер/...",
             keyboardType = KeyboardType.Text,
             singleLine = false,
             modifier = Modifier.height(100.dp)
@@ -345,7 +383,7 @@ fun EditProfileSheet(
         ) {
             Button(
                 onClick = {
-                    // TODO:
+                    //TODO:
                     viewModel.saveProfile()
                     onDismiss()
                 },

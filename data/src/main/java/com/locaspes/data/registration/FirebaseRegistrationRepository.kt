@@ -5,6 +5,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.locaspes.data.UserDataRepository
 import com.locaspes.data.UserDataStore
+import com.locaspes.data.model.UserProfile
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -16,15 +17,22 @@ class FirebaseRegistrationRepository @Inject constructor(
     override suspend fun signUp(email: String, username: String, password: String): Boolean{
         //TODO: БЕЗОПАСНОСТЬ СДЕЛАТЬ
         try {
-            val newUser = hashMapOf(
-                "username" to username,
-                "password" to password,
-                "email" to email,
-                "premium" to false,
-                "projects_applications" to emptyList<String>(),
-                "projects_created" to emptyList<String>(),
-                "projects_accepted" to emptyList<String>()
-            )
+
+//            val newUser = UserProfile(
+//                username = username,
+//                password = password,
+//                email = email,
+//                premium = false,
+//                projectsApplications = emptyList(),
+//                projectsCreated = emptyList(),
+//                projectsAccepted = emptyList(),
+//
+//            )
+            val newUser = UserProfile(
+                username = username,
+                password = password,
+                email = email,
+                )
             val document = dataBase.collection("Users").add(newUser).await()
             document.update("id", document.id)
             Log.d("RegistrationRepository","user added with ID: ${document.id}")

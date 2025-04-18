@@ -10,4 +10,6 @@ interface UserActionsRepository {
     suspend fun cancelUserApplication(projectId: String): Boolean
     suspend fun createProject(projectCard: ProjectCard): Boolean
     suspend fun getUserProfile(userId: String): Result<UserProfile>
+    suspend fun saveUserProfile(userProfile: UserProfile): Result<String>
+    suspend fun acceptUserApplicationToProject(projectId: String, userId: String): Result<String>
 }

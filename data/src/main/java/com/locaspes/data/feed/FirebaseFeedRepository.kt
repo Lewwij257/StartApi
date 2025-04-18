@@ -37,11 +37,11 @@ class FirebaseFeedRepository @Inject constructor(
             val userId = userDataRepository.getUserId().first()
             Log.d("FirebaseFeedRepositoryDebug", "userId: $userId")
             val userDocumentSnapshot = usersDatabaseRef.document(userId.toString()).get().await()
-            val createdProjectsList = userDocumentSnapshot.get("projects_created") as? List<String> ?: emptyList()
+            val createdProjectsList = userDocumentSnapshot.get("projectsAreated") as? List<String> ?: emptyList()
             Log.d("FirebaseFeedRepositoryDebug", "Created projects: $createdProjectsList")
-            val acceptedProjectsList = userDocumentSnapshot.get("projects_accepted") as? List<String> ?: emptyList()
+            val acceptedProjectsList = userDocumentSnapshot.get("projectsAccepted") as? List<String> ?: emptyList()
             Log.d("FirebaseFeedRepositoryDebug", "accepted projects: $acceptedProjectsList")
-            val applicationsProjectsList = userDocumentSnapshot.get("projects_applications") as? List<String> ?: emptyList()
+            val applicationsProjectsList = userDocumentSnapshot.get("projectsApplications") as? List<String> ?: emptyList()
             Log.d("FirebaseFeedRepositoryDebug", "applied projects: $applicationsProjectsList")
 
             //only ID's in this list
