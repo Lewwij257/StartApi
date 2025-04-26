@@ -7,8 +7,10 @@ import kotlinx.coroutines.flow.MutableStateFlow
 
 data class MessengerUiState (
     val openMessengerScreen: Boolean = false,
+    val openedProjectMessengerId: String = "",
     val messages: List<Message> = emptyList(),
     val error: String? = null,
     val isLoading: Boolean = false,
-    val chatList: List<ChatItem> = emptyList()
+    val chatList: List<ChatItem> = emptyList(),
+    val messageText: String = ""
 )

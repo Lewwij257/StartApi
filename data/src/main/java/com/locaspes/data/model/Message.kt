@@ -7,5 +7,6 @@ data class Message(
     val senderProfileId: String = "",
     val message: String = "",
     val projectId: String = "",
-    val date: Timestamp = Timestamp.now()
+    val date: Timestamp = Timestamp.now(),
+    val senderProfileName: String = ""
     )
