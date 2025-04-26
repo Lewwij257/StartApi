@@ -15,19 +15,9 @@ class FirebaseRegistrationRepository @Inject constructor(
     private val dataBase = Firebase.firestore
 
     override suspend fun signUp(email: String, username: String, password: String): Boolean{
+        Log.d("FirebaseRegistrationRepository", "SignUp()")
         //TODO: БЕЗОПАСНОСТЬ СДЕЛАТЬ
         try {
-
-//            val newUser = UserProfile(
-//                username = username,
-//                password = password,
-//                email = email,
-//                premium = false,
-//                projectsApplications = emptyList(),
-//                projectsCreated = emptyList(),
-//                projectsAccepted = emptyList(),
-//
-//            )
             val newUser = UserProfile(
                 username = username,
                 password = password,
@@ -37,6 +27,7 @@ class FirebaseRegistrationRepository @Inject constructor(
             document.update("id", document.id)
             Log.d("RegistrationRepository","user added with ID: ${document.id}")
             userDataRepository.saveUserId(document.id)
+            Log.d("FirebaseRegistrationRepository", "SignUpSuccess")
             return true
         }
 

@@ -3,8 +3,10 @@ package com.locaspes.data.feed
 import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.auth.User
 import com.locaspes.data.UserDataRepository
 import com.locaspes.data.model.ProjectCard
+import com.locaspes.data.model.UserProfile
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -37,7 +39,7 @@ class FirebaseFeedRepository @Inject constructor(
             val userId = userDataRepository.getUserId().first()
             Log.d("FirebaseFeedRepositoryDebug", "userId: $userId")
             val userDocumentSnapshot = usersDatabaseRef.document(userId.toString()).get().await()
-            val createdProjectsList = userDocumentSnapshot.get("projectsAreated") as? List<String> ?: emptyList()
+            val createdProjectsList = userDocumentSnapshot.get("projectsCreated") as? List<String> ?: emptyList()
             Log.d("FirebaseFeedRepositoryDebug", "Created projects: $createdProjectsList")
             val acceptedProjectsList = userDocumentSnapshot.get("projectsAccepted") as? List<String> ?: emptyList()
             Log.d("FirebaseFeedRepositoryDebug", "accepted projects: $acceptedProjectsList")
@@ -132,5 +134,50 @@ class FirebaseFeedRepository @Inject constructor(
         }
         return query.get().await().documents
     }
+
+    override suspend fun getProjectRelatedUsers(projectId: String): Result<List<List<UserProfile>>> {
+        return try {
+            val projectDocumentSnapshot = projectsDatabaseRef.document(projectId).get().await()
+            val appliedUserList = projectDocumentSnapshot.get("usersApplied") as? List<String> ?: emptyList()
+            val acceptedUsersList = projectDocumentSnapshot.get("usersAccepted") as? List<String> ?: emptyList()
+            val creatorUserList = projectDocumentSnapshot.get("author") as? List<String> ?: emptyList()
+
+            val projectRelatedUsers = listOf(appliedUserList, acceptedUsersList, creatorUserList)
+
+            if (projectRelatedUsers.any{it.isNotEmpty()}){
+                val usersApplied = if (projectRelatedUsers[0].isNotEmpty()){
+                    usersDatabaseRef.whereIn("id", projectRelatedUsers[0]).get().await()
+                        .documents.mapNotNull { documentSnapshot ->
+                            documentSnapshot.toObject(UserProfile::class.java)?.copy(id = documentSnapshot.id)
+                        }
+                } else emptyList()
+
+                val userAccepted = if (projectRelatedUsers[1].isNotEmpty()){
+                    usersDatabaseRef.whereIn("id", projectRelatedUsers[1]).get().await()
+                        .documents.mapNotNull { documentSnapshot ->
+                            documentSnapshot.toObject(UserProfile::class.java)?.copy(id = documentSnapshot.id)
+                        }
+                } else emptyList()
+
+                val userCreatorList = if (projectRelatedUsers[2].isNotEmpty()){
+                    usersDatabaseRef.whereIn("id", projectRelatedUsers[2]).get().await()
+                        .documents.mapNotNull { documentSnapshot ->
+                            documentSnapshot.toObject(UserProfile::class.java)?.copy(id = documentSnapshot.id)
+                        }
+                } else emptyList()
+
+                val users = listOf(usersApplied, userAccepted, userCreatorList)
+                Log.d("getProjectRelatedUsers", "project related users: $users")
+                Result.success(users)
+            }
+            else
+                Result.success(emptyList())
+        }
+        catch (e: Exception){
+            Result.failure(Exception("Не удалось загрузить : ${e.message}"))
+        }
+    }
+
+
 
 }

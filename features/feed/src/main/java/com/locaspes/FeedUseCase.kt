@@ -2,13 +2,19 @@ package com.locaspes
 
 import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
+import com.locaspes.data.UserDataRepository
 import com.locaspes.data.feed.FirebaseFeedRepository
 import com.locaspes.data.model.ProjectCard
+import com.locaspes.data.model.UserProfile
 import com.locaspes.data.user.FirebaseUserActionsRepository
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
-class FeedUseCase @Inject constructor(private val firebaseFeedRepository: FirebaseFeedRepository, private val firebaseUserActionsRepository: FirebaseUserActionsRepository) {
+class FeedUseCase @Inject constructor(
+    private val firebaseFeedRepository: FirebaseFeedRepository,
+    private val firebaseUserActionsRepository: FirebaseUserActionsRepository,
+    private val userDataRepository: UserDataRepository) {
 
     private var lastDocument: DocumentSnapshot? = null
     private var hasMoreData: Boolean = true
@@ -45,4 +51,11 @@ class FeedUseCase @Inject constructor(private val firebaseFeedRepository: Fireba
         return firebaseUserActionsRepository.cancelUserApplication(projectId)
     }
 
+    suspend fun getProjectRelatedUsers(projectId: String): Result<List<List<UserProfile>>>{
+        return firebaseFeedRepository.getProjectRelatedUsers(projectId)
+    }
+
+    suspend fun getCurrentUserId(): String{
+        return userDataRepository.getUserId().first()!!
+    }
 }

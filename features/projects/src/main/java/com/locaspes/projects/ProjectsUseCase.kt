@@ -3,6 +3,7 @@ package com.locaspes.projects
 import com.locaspes.data.UserDataRepository
 import com.locaspes.data.feed.FirebaseFeedRepository
 import com.locaspes.data.model.ProjectCard
+import com.locaspes.data.model.UserProfile
 import com.locaspes.data.user.FirebaseUserActionsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -33,6 +34,7 @@ class ProjectsUseCase @Inject constructor(
         return firebaseUserActionsRepository.createProject(projectCard)
     }
 
-
-
+    suspend fun getProjectRelatedUsers(projectId: String): Result<List<List<UserProfile>>>{
+        return firebaseFeedRepository.getProjectRelatedUsers(projectId)
+    }
 }

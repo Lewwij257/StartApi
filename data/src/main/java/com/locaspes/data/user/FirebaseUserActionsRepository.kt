@@ -4,12 +4,18 @@ import android.util.Log
 import com.google.firebase.FirebaseException
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.auth.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.locaspes.data.UserDataRepository
+import com.locaspes.data.model.ChatItem
+import com.locaspes.data.model.Message
 import com.locaspes.data.model.ProjectCard
 import com.locaspes.data.model.UserProfile
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -19,6 +25,44 @@ class FirebaseUserActionsRepository @Inject constructor(
 ): UserActionsRepository {
 
     private val dataBase = Firebase.firestore
+
+    override suspend fun sendMessage(message: Message
+    ): Result<String> {
+        return try {
+            dataBase.collection("Chats")
+                .document(message.projectId)
+                .collection("Messages")
+                .add(message)
+                .await()
+            Result.success("Успешно!")
+        }
+        catch (e: Exception){
+            Result.failure(Exception("Ошибка: ${e.message}" ))
+        }
+    }
+
+    override suspend fun getChatMessages(projectId: String): Flow<Result<List<Message>>> = callbackFlow {
+        val listener = dataBase.collection("Chats")
+            .document(projectId)
+            .collection("Messages")
+            .orderBy("date", Query.Direction.ASCENDING)
+            .limit(50) // Ограничиваем 50 последними сообщениями
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    trySend(Result.failure(Exception("Ошибка загрузки сообщений: ${error.message}")))
+                    return@addSnapshotListener
+                }
+
+                snapshot?.let {
+                    val messages = it.documents.mapNotNull { doc ->
+                        doc.toObject(Message::class.java)?.apply { id = doc.id }
+                    }
+                    trySend(Result.success(messages))
+                }
+            }
+
+        awaitClose { listener.remove() }
+    }
 
     override suspend fun addApplicationToProject(projectId: String): Boolean {
         val currentUserId = userDataRepository.getUserId().first()!!
@@ -66,7 +110,21 @@ class FirebaseUserActionsRepository @Inject constructor(
             newProjectDocument.update("id", newProjectDocument.id)
             dataBase.collection("Users")
                 .document(userDataRepository.getUserId().first()!!)
-                .update("projectsCreated", FieldValue.arrayUnion(newProjectDocument.id))
+                .update("projectsCreated", FieldValue.arrayUnion(newProjectDocument.id)).await()
+
+
+            //TODO: ДОДДЕЛАТЬ
+
+            val chatItem = ChatItem(
+                projectName = projectCard.name,
+                id = newProjectDocument.id,
+                projectIconUrl = "",
+                lastMessage = "Ещё нет сообщений",
+                lastMessageDate = Timestamp.now().toString(),
+                hasNewMessages = false
+            )
+
+            dataBase.collection("Chats").document(newProjectDocument.id).set(chatItem).await()
             return true
         }
         catch (e: Exception){
@@ -145,5 +203,47 @@ class FirebaseUserActionsRepository @Inject constructor(
         }
 
     }
+
+    override suspend fun getUserChats(): Result<List<ChatItem>> {
+
+        Log.d("FirebaseUserActionsRepository", "getUserChats")
+
+        return try {
+
+            val userDocumentSnapshot = dataBase.collection("Users")
+                .document(userDataRepository.getUserId().first()!!).get().await()
+
+            val projectsCreated = userDocumentSnapshot.get("projectsCreated") as? List<String> ?: emptyList()
+            val projectsAccepted = userDocumentSnapshot.get("projectsAccepted") as? List<String> ?: emptyList()
+            val allProjectIds = (projectsCreated + projectsAccepted).distinct()
+
+            Log.d("FirebaseUserActionsRepository", allProjectIds.toString())
+
+            if (allProjectIds.isEmpty()){
+                Result.success(emptyList<ChatItem>())
+            }
+
+            val chatItemsList = mutableListOf<ChatItem>()
+            for (projectId in allProjectIds){
+                val chatDocument = dataBase
+                    .collection("Chats")
+                    .document(projectId)
+                    .get()
+                    .await()
+                if (chatDocument.exists()){
+                    val chatItem = chatDocument.toObject(ChatItem::class.java)
+                    chatItemsList.add(chatItem!!)
+                }
+            }
+            Log.d("FirebaseUserActionsRepository", "getUserChats success ${chatItemsList.size}")
+            Result.success(chatItemsList)
+        }
+        catch (e: Exception){
+            Result.failure(Exception("ошибка: ${e.message}"))
+        }
+
+
+    }
+
 
 }

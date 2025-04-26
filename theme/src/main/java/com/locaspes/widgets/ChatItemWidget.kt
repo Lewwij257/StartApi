@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -50,7 +51,8 @@ fun ChatItemWidget(
         ) {
             Text(
                 text = chatItem.projectName,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium
             )
             Text(
                 text = chatItem.lastMessage
@@ -60,10 +62,10 @@ fun ChatItemWidget(
         Column(
             modifier = Modifier
         ) {
-            Text(
-                text = chatItem.lastMessageDate,
-                Modifier.padding(end = 16.dp)
-            )
+//            Text(
+//                text = chatItem.lastMessageDate,
+//                Modifier.padding(end = 16.dp)
+//            )
 
             if (chatItem.hasNewMessages) {
                 Text(

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.DocumentSnapshot
 import com.locaspes.FeedUseCase
 import com.locaspes.data.UserDataRepository
+import com.locaspes.data.model.ProjectCard
 import com.locaspes.data.user.FirebaseUserActionsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -78,6 +79,17 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
         }
     }
 
+    fun changeAuthorState(projectCard: ProjectCard){
+        viewModelScope.launch {
+            if (projectCard.author == feedUseCase.getCurrentUserId()){
+                _uiState.update { it.copy( isAuthorState = true) }
+            }
+            else{
+                _uiState.update { it.copy( isAuthorState = false) }
+            }
+        }
+    }
+
     fun applyUserToProject(projectId: String){
         viewModelScope.launch {
             _uiState.update{it.copy(canApply = null)}
@@ -95,6 +107,16 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
         }
     }
 
-
-
+    fun getProjectRelatedUsers(projectId: String) {
+        viewModelScope.launch {
+            val projectRelatedUsers = feedUseCase.getProjectRelatedUsers(projectId)
+            if (projectRelatedUsers.isSuccess) {
+                Log.d("getProjectRelatedUsers", "success")
+                _uiState.update { it.copy(projectParticipants = projectRelatedUsers.getOrNull()!!) }
+            }
+            else{
+                Log.d("getProjectRelatedUsers", "error")
+            }
+        }
+    }
 }
