@@ -1,10 +1,15 @@
 package com.locaspes.data.registration
 
+import android.net.http.NetworkException
+import android.os.Build
 import android.util.Log
+import androidx.annotation.RequiresExtension
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.rpc.context.AttributeContext.Auth
 import com.locaspes.data.UserDataRepository
 import com.locaspes.data.UserDataStore
+import com.locaspes.data.model.AuthResult
 import com.locaspes.data.model.UserProfile
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -14,7 +19,8 @@ class FirebaseRegistrationRepository @Inject constructor(
 
     private val dataBase = Firebase.firestore
 
-    override suspend fun signUp(userProfile: UserProfile): Result<String>{
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
+    override suspend fun signUp(userProfile: UserProfile): AuthResult{
         //TODO: БЕЗОПАСНОСТЬ СДЕЛАТЬ
         return try {
             val uniqueEmailQuery = dataBase.collection("Users")
@@ -22,22 +28,26 @@ class FirebaseRegistrationRepository @Inject constructor(
                 .get()
                 .await()
             if (!uniqueEmailQuery.isEmpty){
-                return Result.failure(Exception("Email уже занят!"))
+                AuthResult.AuthenticationError("Email уже занят!")
             }
             val uniqueUsernameQuery = dataBase.collection("Users")
                 .whereEqualTo("password", userProfile.password)
                 .get()
                 .await()
             if (!uniqueUsernameQuery.isEmpty){
-                return Result.failure(Exception("Имя пользователя занято"))
+                AuthResult.AuthenticationError("Имя пользователя уже занято!")
             }
             val document = dataBase.collection("Users").add(userProfile).await()
             document.update("id", document.id)
             userDataRepository.saveUserId(document.id)
-            Result.success("Получилось!")
+            AuthResult.Success(document.id)
         }
         catch (e: Exception){
-            Result.failure(Exception("Ошибка: ${e.message}"))
+            when(e){
+                is NetworkException -> AuthResult.NetworkError("Нет сети!")
+                else -> AuthResult.UnknownError("Неизвестная ошибка: ${e.message}")
+
+            }
         }
     }
 

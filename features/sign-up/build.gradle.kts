@@ -52,8 +52,10 @@ dependencies {
     implementation(libs.androidx.material3)
 
     implementation(libs.hilt.android)
-    implementation(libs.androidx.junit.ktx)
-    androidTestImplementation(libs.testng)
+    //implementation(libs.androidx.junit.ktx)
+    //androidTestImplementation(libs.testng)
+
+
 
     implementation(project(":data"))
     implementation(project(":theme"))
@@ -62,6 +64,9 @@ dependencies {
     //dagger.hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
+
+
+
 
 
 }
