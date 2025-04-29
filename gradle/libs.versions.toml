@@ -2,6 +2,7 @@
 
 coilCompose = "3.1.0"
 coilNetworkOkhttp = "3.1.0"
+coreTesting = "2.2.0"
 javapoet = "1.13.0"
 kotlinxCoroutinesTest = "1.10.1"
 ksp = "2.0.21-1.0.27"
@@ -22,6 +23,7 @@ appcompat = "1.7.0"
 material = "1.12.0"
 mockitoCore = "5.12.0"
 mockitoKotlin = "5.3.1"
+mockk = "1.12.0"
 runtimeAndroid = "1.7.8"
 screenshotValidationJunitEngine = "0.0.1-alpha09"
 foundationAndroid = "1.7.8"
@@ -45,6 +47,7 @@ firebaseCommonKtx = "21.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
 androidx-runtime = { module = "androidx.compose.runtime:runtime" }
 coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
 coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
@@ -75,6 +78,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
 mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 screenshot-validation-junit-engine = { group = "com.android.tools.screenshot", name = "screenshot-validation-junit-engine", version.ref = "screenshotValidationJunitEngine" }
 androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundationAndroid" }
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }

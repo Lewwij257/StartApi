@@ -34,21 +34,24 @@ android {
 
 dependencies {
 
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.material)
+    api(libs.androidx.core.ktx)
+    api(libs.androidx.lifecycle.runtime.ktx)
+    api(libs.androidx.appcompat)
+    api(libs.material)
 
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    testImplementation (libs.mockito.core)
-    testImplementation (libs.mockito.kotlin)
-    testImplementation (libs.kotlinx.coroutines.test)
-    testImplementation (libs.truth)
+    api(libs.coil.compose)
+    api(libs.coil.network.okhttp)
 
-    implementation(libs.coil.compose)
-    implementation(libs.coil.network.okhttp)
+    testApi(libs.junit)
+    testApi(libs.mockito.core)
+    testApi(libs.mockito.kotlin)
+    testApi (libs.kotlinx.coroutines.test)
+    testApi (libs.truth)
+
+    androidTestApi(libs.androidx.junit)
+    androidTestApi(libs.androidx.espresso.core)
+
+
 
 
 

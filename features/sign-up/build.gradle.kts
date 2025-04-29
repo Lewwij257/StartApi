@@ -51,23 +51,29 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation(libs.hilt.android)
-    //implementation(libs.androidx.junit.ktx)
-    //androidTestImplementation(libs.testng)
+    implementation("com.google.dagger:hilt-android:2.51.1")
+    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 
+    //не помню что это, всё работает, не трогать
+    implementation(libs.hilt.android)
+
+    testImplementation(libs.junit)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.truth)
+
+    testImplementation(libs.mockk)
+    testImplementation(libs.androidx.core.testing)
+
+
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
 
 
     implementation(project(":data"))
     implementation(project(":theme"))
     implementation(project(":core"))
-
-    //dagger.hilt
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
-
-
-
-
 
 }
 kapt {
