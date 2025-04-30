@@ -24,6 +24,7 @@ class MessengerViewModel @Inject constructor(
     init {
         loadChatList()
         loadUserProfile()
+
     }
 
     private val _uiState = MutableStateFlow(MessengerUiState())
@@ -89,7 +90,9 @@ class MessengerViewModel @Inject constructor(
     }
 
     suspend fun getUserId(): String{
-        return messengerUseCase.getUserId()
+        viewModelScope.launch {
+            return@launch messengerUseCase.getUserId()
+        }
     }
 
     fun changeMessageTextState(text: String){
