@@ -40,6 +40,7 @@ class FirebaseRegistrationRepository @Inject constructor(
             val document = dataBase.collection("Users").add(userProfile).await()
             document.update("id", document.id)
             userDataRepository.saveUserId(document.id)
+            userDataRepository.saveUserName(userProfile.username)
             AuthResult.Success(document.id)
         }
         catch (e: Exception){

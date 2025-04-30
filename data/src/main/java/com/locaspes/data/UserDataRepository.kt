@@ -9,6 +9,14 @@ class UserDataRepository @Inject constructor(private val userDataStore: UserData
         userDataStore.saveUserId(userId)
     }
 
+    suspend fun saveUserName(userName: String){
+        userDataStore.saveUserName(userName)
+    }
+
+    suspend fun getUserName(): Flow<String?>{
+        return userDataStore.userName
+    }
+
     suspend fun clearUserId(){
         userDataStore.clearUserId()
     }

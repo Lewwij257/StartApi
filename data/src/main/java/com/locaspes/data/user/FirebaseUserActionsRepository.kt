@@ -34,9 +34,12 @@ class FirebaseUserActionsRepository @Inject constructor(
                 .collection("Messages")
                 .add(message)
                 .await()
+            Log.d("FirebaseUserActionsRepository", "message sent!")
             Result.success("Успешно!")
+
         }
         catch (e: Exception){
+            Log.d("FirebaseUserActionsRepository", "message not sent!")
             Result.failure(Exception("Ошибка: ${e.message}" ))
         }
     }

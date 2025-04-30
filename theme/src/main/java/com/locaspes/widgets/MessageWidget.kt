@@ -1,6 +1,7 @@
 package com.locaspes.widgets
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -22,15 +24,19 @@ import com.locaspes.data.model.Message
 import com.locaspes.theme.R
 
 @Composable
-fun MessageWidget(message: Message) {
+fun MessageWidget(
+    message: Message,
+    profileImagePainter: Painter
+) {
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .background(MaterialTheme.colorScheme.surfaceVariant),
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Аватар
         Image(
-            painter = rememberAsyncImagePainter(message.senderProfileId),
+            painter = profileImagePainter,
             contentDescription = "Аватар пользователя",
             modifier = Modifier
                 .size(64.dp)
@@ -44,23 +50,17 @@ fun MessageWidget(message: Message) {
             Text(
                 text = message.senderProfileName,
                 fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.titleMedium
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Text(
-                text = message.message
+                text = message.message,
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
         }
     }
 }
 
-@Composable
-@Preview
-fun MessageWidgetPreview(){
-    MessageWidget(Message(
-        id = "1324",
-        senderProfileId = "3232321",
-        message = "test message copy",
-        projectId = "221323213",
-        senderProfileName = "Ivan"
-    ))
-}
+
+
+//TODO: СЕЙЧАС БЕРЁТСЯ И ЗАГРУЖАЕТСЯ ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ ИЗ ОБЛАКА А НАДО СДЕЛАТЬ ЛОКАЛЬНОЕ СОХРАНЕНИЕ

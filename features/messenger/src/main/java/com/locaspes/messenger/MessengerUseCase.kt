@@ -3,6 +3,7 @@ package com.locaspes.messenger
 import com.locaspes.data.UserDataRepository
 import com.locaspes.data.model.ChatItem
 import com.locaspes.data.model.Message
+import com.locaspes.data.model.UserProfile
 import com.locaspes.data.user.FirebaseUserActionsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -29,8 +30,16 @@ class MessengerUseCase @Inject constructor(
         return userDataRepository.getUserId().first()!!
     }
 
+    suspend fun getUserNickname(): String{
+        return userDataRepository.getUserName().first()!!
+    }
+
     suspend fun getChats(): Result<List<ChatItem>>{
         return firebaseUserActionsRepository.getUserChats()
+    }
+
+    suspend fun loadUserProfile(userId: String): Result<UserProfile> {
+        return firebaseUserActionsRepository.getUserProfile(userId)
     }
 
     suspend fun sendMessage(message: Message): Result<String>{
