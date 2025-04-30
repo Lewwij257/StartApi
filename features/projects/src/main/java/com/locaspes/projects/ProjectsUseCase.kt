@@ -37,4 +37,12 @@ class ProjectsUseCase @Inject constructor(
     suspend fun getProjectRelatedUsers(projectId: String): Result<List<List<UserProfile>>>{
         return firebaseFeedRepository.getProjectRelatedUsers(projectId)
     }
+
+    suspend fun acceptUserApplication(projectId: String, userId: String): Result<String> {
+        return firebaseUserActionsRepository.acceptUserApplicationToProject(projectId, userId)
+    }
+
+    suspend fun declineUserApplication(projectId: String, userId: String): Result<String>{
+        return firebaseUserActionsRepository.declineUserApplicationToProject(projectId, userId)
+    }
 }

@@ -95,7 +95,7 @@ class SettingsViewModel @Inject constructor(
 
     private fun loadUserProfile() {
         viewModelScope.launch {
-            val userId = userDataRepository.getUserId().first()!!
+            val userId = userDataRepository.getUserProfile().first()!!.id
             settingsUseCase.loadUserProfile(userId).onSuccess { profile ->
                 _uiState.update {
                     it.copy(

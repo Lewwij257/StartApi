@@ -13,12 +13,16 @@ import javax.inject.Inject
 
 class UserDataStore @Inject constructor(
     private val dataStore: DataStore<Preferences>,
-    private val gson: Gson
 ) {
     companion object{
-        private val USER_ID_KEY = stringPreferencesKey("user_id")
-        private val USER_NAME_KEY = stringPreferencesKey("user_name")
         private val USER_PROFILE_KEY = stringPreferencesKey("user")
+        val gson = Gson()
+    }
+
+    val userProfile: Flow<UserProfile?> = dataStore.data.map {preferences ->
+        preferences[USER_PROFILE_KEY]?.let { jsonString ->
+            gson.fromJson(jsonString, UserProfile::class.java)
+        }
     }
 
     suspend fun saveUserProfile(userProfile: UserProfile){
@@ -27,32 +31,10 @@ class UserDataStore @Inject constructor(
         }
     }
 
-    suspend fun saveUserId(userId: String){
+    suspend fun clearUserProfile(){
         dataStore.edit { preferences ->
-            preferences[USER_ID_KEY] = userId
+            preferences.remove(USER_PROFILE_KEY)
         }
     }
-
-    suspend fun saveUserName(userName: String){
-        dataStore.edit { preferences ->
-            preferences[USER_NAME_KEY] = userName
-        }
-    }
-
-    val userId: Flow<String?> = dataStore.data.map { preferences ->
-        preferences[USER_ID_KEY]
-    }
-
-    val userName: Flow<String?> = dataStore.data.map { preferences ->
-        preferences[USER_NAME_KEY]
-    }
-
-    suspend fun clearUserId(){
-        dataStore.edit { preferences ->
-            preferences.remove(USER_ID_KEY)
-        }
-    }
-
-
 
 }

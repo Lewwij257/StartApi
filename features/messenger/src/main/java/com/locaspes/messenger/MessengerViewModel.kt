@@ -1,10 +1,12 @@
 package com.locaspes.messenger
 
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.locaspes.data.UserDataRepository
 import com.locaspes.data.model.Message
+import com.locaspes.data.model.UserProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,19 +23,22 @@ class MessengerViewModel @Inject constructor(
     private val userDataRepository: UserDataRepository
 ) : ViewModel() {
 
+    private val _uiState = MutableStateFlow(MessengerUiState())
+    val uiState: StateFlow<MessengerUiState> = _uiState.asStateFlow()
+
+
     init {
         loadChatList()
         loadUserProfile()
-
     }
 
-    private val _uiState = MutableStateFlow(MessengerUiState())
-    val uiState: StateFlow<MessengerUiState> = _uiState.asStateFlow()
 
     fun openChat(chatId: String){
         _uiState.update { it.copy(openChatScreen = true) }
         loadMessages(chatId)
     }
+
+
 
     fun loadChatList(){
         viewModelScope.launch {
@@ -52,8 +57,8 @@ class MessengerViewModel @Inject constructor(
             val messageToSend = Message(
                 message = messageText,
                 projectId = _uiState.value.openedProjectMessengerId,
-                senderProfileName = _uiState.value.profileName,
-                senderProfileAvatar = _uiState.value.profileAvatarURL
+                senderProfileName = _uiState.value.userProfile.username,
+                senderProfileAvatar = _uiState.value.userProfile.avatarURL
             )
             messengerUseCase.sendMessage(messageToSend)
             Log.d("MessengerViewModel", "Отправлено сообщение: $messageText")
@@ -89,51 +94,15 @@ class MessengerViewModel @Inject constructor(
         _uiState.update { it.copy(openedProjectMessengerId = id) }
     }
 
-    suspend fun getUserId(): String{
-        viewModelScope.launch {
-            return@launch messengerUseCase.getUserId()
-        }
-    }
-
     fun changeMessageTextState(text: String){
         _uiState.update { it.copy(messageText = text) }
     }
 
     private fun loadUserProfile() {
         viewModelScope.launch {
-            val userId = userDataRepository.getUserId().first()!!
-            messengerUseCase.loadUserProfile(userId).onSuccess { profile ->
-                _uiState.update {
-                    it.copy(
-                        profileId = userId,
-                        profileName = profile.username,
-                        profileDescription = profile.profileDescription,
-                        profileSkills = profile.skills,
-                        profileAvatarURL = profile.avatarURL,
-                        profession = profile.profession
-                    )
-                }
-            }.onFailure { e ->
-                _uiState.update { it.copy(error = e.message) }
-            }
+            val userProfile = userDataRepository.getUserProfile().first()!!
+            _uiState.update { it.copy(userProfile = userProfile) }
         }
     }
-
-
-//    fun changeOpenMessageScreenState(){
-//        Log.d("MessengerScreen", _uiState.value.openChatScreen.toString() + " changing in changeOpenMessageScreenState before")
-//        if (_uiState.value.openChatScreen){
-//            _uiState.update { it.copy(openChatScreen = false) }
-//        }
-//        else{
-//            _uiState.update { it.copy(openChatScreen = true) }
-//        }
-//        Log.d("MessengerScreen", _uiState.value.openChatScreen.toString() + " changing in changeOpenMessageScreenState after")
-//    }
-//
-//    fun openChat(projectId: String){
-//        changeOpenMessageScreenState()
-//        loadMessages(projectId)
-//    }
 
 }

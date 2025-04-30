@@ -36,9 +36,9 @@ class FirebaseFeedRepository @Inject constructor(
 
     override fun getUserRelatedProjects(): Flow<List<List<ProjectCard>>> = flow {
         try {
-            val userId = userDataRepository.getUserId().first()
+            val userId = userDataRepository.getUserProfile().first()!!.id
             Log.d("FirebaseFeedRepositoryDebug", "userId: $userId")
-            val userDocumentSnapshot = usersDatabaseRef.document(userId.toString()).get().await()
+            val userDocumentSnapshot = usersDatabaseRef.document(userId).get().await()
             val createdProjectsList = userDocumentSnapshot.get("projectsCreated") as? List<String> ?: emptyList()
             Log.d("FirebaseFeedRepositoryDebug", "Created projects: $createdProjectsList")
             val acceptedProjectsList = userDocumentSnapshot.get("projectsAccepted") as? List<String> ?: emptyList()

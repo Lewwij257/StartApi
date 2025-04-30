@@ -28,6 +28,7 @@ class ProjectsViewModel @Inject constructor(
     init {
         loadUserRelatedProjects()
         Log.d("ViewModelDebug", "ViewModel instance created: $this")
+
     }
 
 
@@ -37,6 +38,20 @@ class ProjectsViewModel @Inject constructor(
                 _uiState.update { it.copy(userRelatedProjects = projects) }
             }
         }
+    }
+
+    fun acceptUsersApplication(projectId: String, userId: String){
+        viewModelScope.launch {
+            projectsUseCase.acceptUserApplication(projectId, userId)
+        }
+    }
+
+    fun declineUsersApplication(projectId: String, userId: String){
+        viewModelScope.launch {
+            projectsUseCase.declineUserApplication(projectId, userId)
+
+        }
+
     }
 
 
@@ -131,6 +146,14 @@ class ProjectsViewModel @Inject constructor(
 
     fun updateCreateProjectTechnologies(technologies: String) {
         _uiState.update { it.copy(createProjectTechnologies = technologies) }
+    }
+
+    fun updateProjectForEdit(project: ProjectCard){
+        _uiState.update { it.copy(projectToEdit = project) }
+    }
+
+    fun updateEditProjectId(projectId: String){
+        _uiState.update { it.copy(editProjectId = projectId) }
     }
 
     //TODO:

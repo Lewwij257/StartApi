@@ -39,8 +39,7 @@ class FirebaseRegistrationRepository @Inject constructor(
             }
             val document = dataBase.collection("Users").add(userProfile).await()
             document.update("id", document.id)
-            userDataRepository.saveUserId(document.id)
-            userDataRepository.saveUserName(userProfile.username)
+            userDataRepository.saveUserProfile(userProfile.copy(id = document.id))
             AuthResult.Success(document.id)
         }
         catch (e: Exception){
@@ -64,7 +63,8 @@ class FirebaseRegistrationRepository @Inject constructor(
                 val storedPassword = document.getString("password")
 
                 if (storedPassword == password){
-                    userDataRepository.saveUserId(document.getString("id").toString())
+                    val userProfile = document.toObject(UserProfile::class.java)
+                    userDataRepository.saveUserProfile(userProfile!!)
                     Result.success("Успех!")
                 }
             }
@@ -76,7 +76,8 @@ class FirebaseRegistrationRepository @Inject constructor(
                 val document = usernameSearchResult.documents.first()
                 val storedPassword = document.getString("password")
                 if (storedPassword == password){
-                    userDataRepository.saveUserId(document.getString("id").toString())
+                    val userProfile = document.toObject(UserProfile::class.java)
+                    userDataRepository.saveUserProfile(userProfile!!)
                     Result.success("Успех!")
                 }
             }

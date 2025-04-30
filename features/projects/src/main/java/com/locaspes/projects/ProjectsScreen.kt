@@ -141,6 +141,7 @@ fun ProjectsScreen(
                     items(uiState.userRelatedProjects[0]) { project ->
                         MainProjectCard(
                             modifier = Modifier.clickable {
+                                viewModel.updateEditProjectId(project.id)
                                 viewModel.updateEditProjectTitle(project.name)
                                 viewModel.updateEditProjectShortDescription(project.shortDescription)
                                 viewModel.updateEditProjectLongDescription(project.longDescription)

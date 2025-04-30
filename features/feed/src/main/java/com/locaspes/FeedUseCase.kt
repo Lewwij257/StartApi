@@ -23,6 +23,14 @@ class FeedUseCase @Inject constructor(
 
     fun hasMoreData(): Boolean = hasMoreData
 
+    suspend fun getUserProfile(): UserProfile{
+        return userDataRepository.getUserProfile().first()!!
+    }
+
+    suspend fun unfollowProject(projectId: String): Result<String>{
+        return firebaseUserActionsRepository.unfollowProject(projectId)
+    }
+
     suspend fun updatePaginationState(newProjects: List<ProjectCard>){
         if (newProjects.isEmpty()){
             hasMoreData = false
@@ -55,7 +63,4 @@ class FeedUseCase @Inject constructor(
         return firebaseFeedRepository.getProjectRelatedUsers(projectId)
     }
 
-    suspend fun getCurrentUserId(): String{
-        return userDataRepository.getUserId().first()!!
-    }
 }

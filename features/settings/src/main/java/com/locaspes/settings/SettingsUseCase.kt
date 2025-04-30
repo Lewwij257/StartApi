@@ -22,7 +22,7 @@ class SettingsUseCase @Inject constructor(
     private val firestore = Firebase.firestore
 
     suspend fun logOut() {
-        userDataRepository.clearUserId()
+        userDataRepository.clearUserProfile()
     }
 
     suspend fun loadUserProfile(userId: String): Result<UserProfile> {
@@ -30,8 +30,7 @@ class SettingsUseCase @Inject constructor(
     }
 
     suspend fun uploadAvatar(uri: Uri): Result<String> {
-        val userId = userDataRepository.getUserId().first()
-            ?: return Result.failure(IllegalStateException("User ID not available"))
+        val userId = userDataRepository.getUserProfile().first()!!.id
         return imageStorageRepository.uploadProfileImage(userId, uri).also { result ->
             result.onSuccess { url ->
                 try {

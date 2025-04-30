@@ -64,9 +64,8 @@ fun MessengerScreen(
                     items(uiState.messages) { message ->
                         MessageWidget(
                             message = message,
-                            profileImagePainter =  rememberAsyncImagePainter(uiState.profileAvatarURL),
-                            isUserMessage = (message.senderProfileId==viewModel.getUserId())
-                            )
+                            profileImagePainter = rememberAsyncImagePainter(message.senderProfileAvatar),
+                            isUserMessage = (message.senderProfileId==uiState.userProfile.id))
                     }
                 }
                 // Поле ввода и кнопка отправки

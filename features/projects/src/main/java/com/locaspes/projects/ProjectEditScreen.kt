@@ -94,13 +94,16 @@ fun ProjectEditScreen(viewModel: ProjectsViewModel) {
                     item {
                         Text(text = "Поданные заявки:", style = MaterialTheme.typography.titleMedium)
                     }
-                    items(uiState.projectRelatedUsers[0]){ users ->
+                    items(uiState.projectRelatedUsers[0]){ user ->
                         ProfileListItem(
-                            profile =  users,
+                            profile =  user,
                             showActionButtons =  true,
-                            //TODO: добавить логику
-                            onAccept = {},
-                            onReject = {})
+                            onAccept = {
+                                viewModel.acceptUsersApplication(uiState.editProjectId, user.id )
+                                viewModel.getProjectRelatedUsers(uiState.editProjectId) },
+                            onReject = {
+                                viewModel.declineUsersApplication(uiState.editProjectId, user.id)
+                                viewModel.getProjectRelatedUsers(uiState.editProjectId)} )
                     }
                 }
                 if (uiState.projectRelatedUsers.getOrNull(1)?.isNotEmpty() == true) {

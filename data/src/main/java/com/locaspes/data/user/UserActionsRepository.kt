@@ -15,6 +15,8 @@ interface UserActionsRepository {
     suspend fun getUserProfile(userId: String): Result<UserProfile>
     suspend fun saveUserProfile(userProfile: UserProfile): Result<String>
     suspend fun acceptUserApplicationToProject(projectId: String, userId: String): Result<String>
+    suspend fun declineUserApplicationToProject(projectId: String, userId: String): Result<String>
+    suspend fun unfollowProject(projectId: String): Result<String>
     suspend fun sendMessage(message: Message): Result<String>
     suspend fun getChatMessages(projectId: String): Flow<Result<List<Message>>>
     suspend fun getUserChats(): Result<List<ChatItem>>

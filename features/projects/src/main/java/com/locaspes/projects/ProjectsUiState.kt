@@ -18,12 +18,16 @@ data class ProjectsUiState(
     val createProjectTechnologies: String = "",
     val successCreatingProject: Boolean? = null,
 
+    val editProjectId: String = "",
     val editProjectTitle: String = "",
     val editProjectShortDescription: String = "",
     val editProjectLongDescription: String = "",
     val editProjectLookingFor: String = "",
     val editProjectRequiredSkills: String = "",
     val editProjectTechnologies: String = "",
+
+    val projectToEdit: ProjectCard = ProjectCard(),
+
     //люди которые подписались
     val editProjectApplies: List<String> = emptyList(),
     val editProjectAccepted: List<String> = emptyList(),

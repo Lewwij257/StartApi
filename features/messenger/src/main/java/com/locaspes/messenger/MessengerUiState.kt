@@ -2,6 +2,7 @@ package com.locaspes.messenger
 
 import com.locaspes.data.model.ChatItem
 import com.locaspes.data.model.Message
+import com.locaspes.data.model.UserProfile
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 
@@ -14,13 +15,6 @@ data class MessengerUiState (
     val chatList: List<ChatItem> = emptyList(),
     val messageText: String = "",
 
-    val profileId: String = "",
-    val profileName: String = "",
-    val profileDescription: String = "",
-    val profileSkills: List<String> = emptyList(),
-    val profileAvatarURL: String = "",
-    val profession: String = ""
-
-
+    val userProfile: UserProfile = UserProfile()
 
 )

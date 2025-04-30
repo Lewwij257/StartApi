@@ -25,15 +25,6 @@ class MessengerUseCase @Inject constructor(
                 }
             }
     }
-
-    suspend fun getUserId(): String{
-        return userDataRepository.getUserId().first()!!
-    }
-
-    suspend fun getUserNickname(): String{
-        return userDataRepository.getUserName().first()!!
-    }
-
     suspend fun getChats(): Result<List<ChatItem>>{
         return firebaseUserActionsRepository.getUserChats()
     }

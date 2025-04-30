@@ -23,15 +23,26 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
 
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
+    var userId: String = ""
 
     private var isLoading = false
 
     init {
         loadProjects()
+        viewModelScope.launch {
+            userId = userDataRepository.getUserProfile().first()!!.id
+        }
     }
 
     fun updateCanApply(canApply: Boolean?){
         _uiState.update { it.copy(canApply = canApply) }
+    }
+
+    fun unfollowProject(projectId: String){
+        viewModelScope.launch {
+            feedUseCase.unfollowProject(projectId)
+            changeCanApplyState(projectId)
+        }
     }
 
     fun updateSearch(searchText: String){
@@ -70,7 +81,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
     fun changeCanApplyState(projectId: String){
         viewModelScope.launch {
             try{
-                _uiState.update { it.copy( canApply = !(feedUseCase.checkIfUserAppliedToProject(userDataRepository.getUserId().first()!!, projectId))) }
+                _uiState.update { it.copy( canApply = !(feedUseCase.checkIfUserAppliedToProject(userDataRepository.getUserProfile().first()!!.id, projectId))) }
                 Log.d("FirebaseUserActionsRepository", uiState.value.canApply.toString())
             }
             catch (e: Exception){
@@ -81,7 +92,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
 
     fun changeAuthorState(projectCard: ProjectCard){
         viewModelScope.launch {
-            if (projectCard.author == feedUseCase.getCurrentUserId()){
+            if (projectCard.author == userDataRepository.getUserProfile().first()!!.id){
                 _uiState.update { it.copy( isAuthorState = true) }
             }
             else{
@@ -93,7 +104,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
     fun applyUserToProject(projectId: String){
         viewModelScope.launch {
             _uiState.update{it.copy(canApply = null)}
-            feedUseCase.applyUserToProject(userDataRepository.getUserId().first()!!, projectId)
+            feedUseCase.applyUserToProject(userDataRepository.getUserProfile().first()!!.id, projectId)
             changeCanApplyState(projectId)
         }
     }

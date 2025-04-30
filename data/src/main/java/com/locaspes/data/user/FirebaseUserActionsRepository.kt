@@ -68,14 +68,14 @@ class FirebaseUserActionsRepository @Inject constructor(
     }
 
     override suspend fun addApplicationToProject(projectId: String): Boolean {
-        val currentUserId = userDataRepository.getUserId().first()!!
+        val currentUserId = userDataRepository.getUserProfile().first()!!.id
         try {
             Log.d("Debug","userid" + currentUserId + "projectId" + projectId)
             if (!checkUserAppliedToProject(projectId)) {
                 dataBase.collection("Users").document(currentUserId)
                     .update("projectsApplications", FieldValue.arrayUnion(projectId)).await()
                 dataBase.collection("Projects").document(projectId)
-                    .update("usersApplied", FieldValue.arrayUnion(userDataRepository.getUserId().first()!!)).await()
+                    .update("usersApplied", FieldValue.arrayUnion(userDataRepository.getUserProfile().first()!!.id)).await()
             }
             return true
         } catch (e: Exception) {
@@ -84,7 +84,7 @@ class FirebaseUserActionsRepository @Inject constructor(
     }
 
     override suspend fun checkUserAppliedToProject(projectId: String): Boolean{
-        val currentUserId = userDataRepository.getUserId().first()!!
+        val currentUserId = userDataRepository.getUserProfile().first()!!.id
         val userDocument = dataBase.collection("Users").document(currentUserId).get().await()
         val userApplications = userDocument.get("projectsApplications") as? List<String> ?: emptyList()
         Log.d("FirebaseUserActionsRepository", "contains project - ${userApplications.contains(projectId)} ")
@@ -92,7 +92,7 @@ class FirebaseUserActionsRepository @Inject constructor(
     }
 
     override suspend fun cancelUserApplication(projectId: String): Boolean {
-        val currentUserId = userDataRepository.getUserId().first()!!
+        val currentUserId = userDataRepository.getUserProfile().first()!!.id
         try {
             if (checkUserAppliedToProject(projectId)){
                 dataBase.collection("Users").document(currentUserId)
@@ -107,12 +107,12 @@ class FirebaseUserActionsRepository @Inject constructor(
 
     override suspend fun createProject(projectCard: ProjectCard): Boolean{
         try {
-            projectCard.author = userDataRepository.getUserId().first()!!
+            projectCard.author = userDataRepository.getUserProfile().first()!!.id
             projectCard.createDate = Timestamp.now()
             val newProjectDocument = dataBase.collection("Projects").add(projectCard).await()
             newProjectDocument.update("id", newProjectDocument.id)
             dataBase.collection("Users")
-                .document(userDataRepository.getUserId().first()!!)
+                .document(userDataRepository.getUserProfile().first()!!.id)
                 .update("projectsCreated", FieldValue.arrayUnion(newProjectDocument.id)).await()
 
 
@@ -194,17 +194,50 @@ class FirebaseUserActionsRepository @Inject constructor(
         projectId: String, userId: String): Result<String> {
         return try {
             dataBase.collection("Users").document(userId).update(
-                "projectsAccepted", projectId
+                "projectsAccepted", FieldValue.arrayUnion(projectId),
+                "projectsApplications", FieldValue.arrayRemove(projectId)
             )
             dataBase.collection("Projects").document(projectId).update(
-                "usersAccepted", userId
+                "usersAccepted", FieldValue.arrayUnion(userId),
+                "usersApplied", FieldValue.arrayRemove(userId)
             )
             Result.success("Пользователь успешно принят!")
         }
         catch (e: Exception){
             Result.failure(Exception("Не удалось добавить пользователя!"))
         }
+    }
 
+    override suspend fun declineUserApplicationToProject(
+        projectId: String, userId: String): Result<String> {
+        return try {
+            dataBase.collection("Users").document(userId).update(
+                "projectsApplications", FieldValue.arrayRemove(projectId)
+            )
+            dataBase.collection("Projects").document(projectId).update(
+                "usersApplied", FieldValue.arrayRemove(userId)
+            )
+            Result.success("Пользователь успешно откланён!")
+        }
+        catch (e: Exception){
+            Result.failure(Exception("Не удалось откланить пользователя!"))
+        }
+
+    }
+
+    override suspend fun unfollowProject(projectId: String): Result<String> {
+        return try {
+            dataBase.collection("Users").document(userDataRepository.getUserProfile().first()!!.id).update(
+                "usersAccepted", FieldValue.arrayRemove(projectId)
+            )
+            dataBase.collection("Projects").document(projectId).update(
+                "usersAccepted", FieldValue.arrayRemove(userDataRepository.getUserProfile().first()!!.id)
+            )
+            Result.success("Успешно отписан!")
+        }
+        catch (e: Exception){
+            Result.failure(Exception("Не удалось отписаться!"))
+        }
     }
 
     override suspend fun getUserChats(): Result<List<ChatItem>> {
@@ -214,7 +247,7 @@ class FirebaseUserActionsRepository @Inject constructor(
         return try {
 
             val userDocumentSnapshot = dataBase.collection("Users")
-                .document(userDataRepository.getUserId().first()!!).get().await()
+                .document(userDataRepository.getUserProfile().first()!!.id).get().await()
 
             val projectsCreated = userDocumentSnapshot.get("projectsCreated") as? List<String> ?: emptyList()
             val projectsAccepted = userDocumentSnapshot.get("projectsAccepted") as? List<String> ?: emptyList()

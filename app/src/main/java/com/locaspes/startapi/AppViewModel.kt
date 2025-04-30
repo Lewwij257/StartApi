@@ -16,7 +16,7 @@ class AppViewModel @Inject constructor(private val userDataRepository: UserDataR
 
     init {
         viewModelScope.launch {
-            userDataRepository.getUserId().collectLatest { userId ->
+            userDataRepository.getUserProfile().collectLatest { userId ->
                 _isUserLoggedIn.value = userId != null
             }
         }

@@ -191,7 +191,26 @@ fun FeedScreen(viewModel: FeedViewModel){
 
                     ProjectCardDescriptionText(title = "Дата создания:", description = selectedProject!!.createDate.toString())
 
-                    if (!uiState.isAuthorState){
+
+
+                    if (selectedProject!!.usersAccepted.contains(viewModel.userId)) {
+                        Button(
+                            onClick = {
+                                viewModel.unfollowProject(selectedProject!!.id)
+                            },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(10.dp),
+                            colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error)
+                        ) {
+                            Text("Отписаться от проекта")
+                            //TODO: Не меняется кнопка!!! и не работает ёу
+                        }
+                    }
+
+
+
+                    else if (!uiState.isAuthorState){
                         when (uiState.canApply){
                             true ->
                                 Button(
@@ -227,6 +246,7 @@ fun FeedScreen(viewModel: FeedViewModel){
                             }
                         }
                     }
+
                     else{
                         Text("Это ваш проект!",
                             modifier = Modifier.fillMaxWidth()
