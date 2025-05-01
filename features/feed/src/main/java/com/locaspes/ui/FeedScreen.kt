@@ -207,9 +207,6 @@ fun FeedScreen(viewModel: FeedViewModel){
                             //TODO: Не меняется кнопка!!! и не работает ёу
                         }
                     }
-
-
-
                     else if (!uiState.isAuthorState){
                         when (uiState.canApply){
                             true ->
