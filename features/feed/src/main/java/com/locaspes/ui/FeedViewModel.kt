@@ -81,7 +81,9 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
     fun changeCanApplyState(projectId: String){
         viewModelScope.launch {
             try{
-                _uiState.update { it.copy( canApply = !(feedUseCase.checkIfUserAppliedToProject(userDataRepository.getUserProfile().first()!!.id, projectId))) }
+                _uiState.update { it.copy(
+                    canApply =
+                    !(feedUseCase.checkIfUserAppliedToProject(userDataRepository.getUserProfile().first()!!.id, projectId))) }
                 Log.d("FirebaseUserActionsRepository", uiState.value.canApply.toString())
             }
             catch (e: Exception){

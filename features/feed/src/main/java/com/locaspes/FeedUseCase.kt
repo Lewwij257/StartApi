@@ -63,4 +63,8 @@ class FeedUseCase @Inject constructor(
         return firebaseFeedRepository.getProjectRelatedUsers(projectId)
     }
 
+    suspend fun checkIfUserAcceptedToProject(projectId: String): Boolean {
+        return firebaseUserActionsRepository.checkUserAcceptedToProject(projectId)
+    }
+
 }

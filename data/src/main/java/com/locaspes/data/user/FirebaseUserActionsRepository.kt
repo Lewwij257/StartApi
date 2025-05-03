@@ -283,7 +283,13 @@ class FirebaseUserActionsRepository @Inject constructor(
 
     }
 
-
+    override suspend fun checkUserAcceptedToProject(projectId: String): Boolean {
+        val currentUserId = userDataRepository.getUserProfile().first()!!.id
+        val userDocument = dataBase.collection("Users").document(currentUserId).get().await()
+        val projectsAccepted = userDocument.get("projectsAccepted") as? List<String> ?: emptyList()
+        Log.d("FirebaseUserActionsRepository", "contains project - ${projectsAccepted.contains(projectId)} ")
+        return projectsAccepted.contains(projectId)
+    }
 
 
 }

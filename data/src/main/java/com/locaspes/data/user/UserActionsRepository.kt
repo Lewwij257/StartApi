@@ -20,4 +20,5 @@ interface UserActionsRepository {
     suspend fun sendMessage(message: Message): Result<String>
     suspend fun getChatMessages(projectId: String): Flow<Result<List<Message>>>
     suspend fun getUserChats(): Result<List<ChatItem>>
+    suspend fun checkUserAcceptedToProject(projectId: String): Boolean
 }

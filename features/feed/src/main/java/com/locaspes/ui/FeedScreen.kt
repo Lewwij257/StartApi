@@ -203,7 +203,7 @@ fun FeedScreen(viewModel: FeedViewModel){
                             colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error)
                         ) {
                             Text("Отписаться от проекта")
-                            //TODO: Не меняется кнопка!!! и не работает ёу
+                            //TODO: Не меняется кнопка!!!
                         }
                     }
                     else if (!uiState.isAuthorState){
