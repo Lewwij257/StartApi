@@ -97,6 +97,8 @@ class FirebaseUserActionsRepository @Inject constructor(
             if (checkUserAppliedToProject(projectId)){
                 dataBase.collection("Users").document(currentUserId)
                     .update("projectsApplications", FieldValue.arrayRemove(projectId)).await()
+                dataBase.collection("Projects").document(projectId)
+                    .update("usersApplied", FieldValue.arrayRemove(currentUserId)).await()
             }
             return true
         }
@@ -228,7 +230,7 @@ class FirebaseUserActionsRepository @Inject constructor(
     override suspend fun unfollowProject(projectId: String): Result<String> {
         return try {
             dataBase.collection("Users").document(userDataRepository.getUserProfile().first()!!.id).update(
-                "usersAccepted", FieldValue.arrayRemove(projectId)
+                "projectsAccepted", FieldValue.arrayRemove(projectId)
             )
             dataBase.collection("Projects").document(projectId).update(
                 "usersAccepted", FieldValue.arrayRemove(userDataRepository.getUserProfile().first()!!.id)

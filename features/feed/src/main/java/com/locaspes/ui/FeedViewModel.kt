@@ -114,7 +114,6 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
             _uiState.update{it.copy(canApply = null)}
             feedUseCase.cancelUserApplication(projectId)
             changeCanApplyState(projectId)
-
         }
     }
 

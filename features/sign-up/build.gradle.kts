@@ -54,17 +54,17 @@ dependencies {
     //всё работает, не трогать
     implementation(libs.hilt.android)
 
-    testImplementation(libs.junit)
-    testImplementation(libs.mockito.core)
-    testImplementation(libs.mockito.kotlin)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.truth)
-
-    testImplementation(libs.mockk)
-    testImplementation(libs.androidx.core.testing)
-
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
+//    testImplementation(libs.junit)
+//    testImplementation(libs.mockito.core)
+//    testImplementation(libs.mockito.kotlin)
+//    testImplementation(libs.kotlinx.coroutines.test)
+//    testImplementation(libs.truth)
+//
+//    testImplementation(libs.mockk)
+//    testImplementation(libs.androidx.core.testing)
+//
+//    androidTestImplementation(libs.androidx.junit)
+//    androidTestImplementation(libs.androidx.espresso.core)
 
     implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")

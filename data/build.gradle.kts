@@ -80,7 +80,10 @@ dependencies {
 
     implementation(project(":core"))
 
+    //tests
+    androidTestApi(libs.junit)
 
+    debugApi(libs.androidx.ui.test.manifest)
 
 }
 

@@ -97,7 +97,6 @@ fun FeedScreen(viewModel: FeedViewModel){
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
                 }
             )
-
             //TODO ДОБАВИТЬ ФИЛЬТРЫ
         }
 
@@ -191,9 +190,9 @@ fun FeedScreen(viewModel: FeedViewModel){
 
                     ProjectCardDescriptionText(title = "Дата создания:", description = selectedProject!!.createDate.toString())
 
-
-
+                    Log.d("FeedScreen", "users accepted: ${selectedProject!!.usersAccepted}, userId: ${viewModel.userId}")
                     if (selectedProject!!.usersAccepted.contains(viewModel.userId)) {
+                        Log.d("FeedScreen", "user accepted")
                         Button(
                             onClick = {
                                 viewModel.unfollowProject(selectedProject!!.id)

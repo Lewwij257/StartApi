@@ -41,6 +41,7 @@ android {
 }
 
 dependencies {
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -50,36 +51,39 @@ dependencies {
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
 
-    implementation(libs.hilt.android)
     implementation(libs.firebase.firestore.ktx)
-    implementation(libs.androidx.ui.test.junit4.android)
 
-    testImplementation(libs.junit)
-    testImplementation(libs.mockito.core)
-    testImplementation(libs.mockito.kotlin)
-    testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation(libs.truth)
+//    // Unit-тесты
+//    testImplementation(libs.junit)
+//    testImplementation(libs.mockito.core)
+//    testImplementation(libs.mockito.kotlin)
+//    testImplementation(libs.mockk)
+//    testImplementation(libs.kotlinx.coroutines.test)
+//    testImplementation(libs.truth)
+//    testImplementation(libs.androidx.core.testing)
 
-    testImplementation(libs.mockk)
-    testImplementation(libs.androidx.core.testing)
-
-    androidTestImplementation(libs.mockito.core)
-    androidTestImplementation(libs.truth)
-    androidTestImplementation(libs.kotlinx.coroutines.test)
-    androidTestImplementation(libs.mockito.kotlin)
-    androidTestImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation("io.mockk:mockk-android:1.13.10")
-
-    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.8.0")
-    debugImplementation("androidx.compose.ui:ui-test-manifest:1.8.0")
+//    // Android-тесты
+//    androidTestImplementation(libs.junit)
+//    androidTestImplementation(libs.androidx.junit)
+//    androidTestImplementation(libs.mockito.core)
+//    androidTestImplementation(libs.mockito.kotlin)
+//    androidTestImplementation("io.mockk:mockk-android:1.13.13")
+//    androidTestImplementation(libs.kotlinx.coroutines.test)
+//    androidTestImplementation(libs.truth)
+//    androidTestImplementation(libs.androidx.espresso.core)
+//    androidTestImplementation(libs.androidx.ui.test.junit4)
+//    debugImplementation(libs.androidx.ui.test.manifest)
 
 
 
     implementation(project(":data"))
     implementation(project(":theme"))
     implementation(project(":core"))
+
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.junit)
+    debugImplementation(libs.androidx.ui.test.manifest)
+
 
     //dagger.hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
