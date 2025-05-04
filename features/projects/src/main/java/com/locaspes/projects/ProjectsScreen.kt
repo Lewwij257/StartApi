@@ -56,7 +56,9 @@ import org.w3c.dom.Text
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun ProjectsScreen(viewModel: ProjectsViewModel) {
+fun ProjectsScreen(
+    viewModel: ProjectsViewModel,
+    onOpenCreatedProjectScreen: (project: ProjectCard) -> Unit) {
 
     val uiState by viewModel.uiState.collectAsState()
     val sheetState = rememberModalBottomSheetState()
@@ -90,7 +92,6 @@ fun ProjectsScreen(viewModel: ProjectsViewModel) {
     if (uiState.successCreatingProject != null) {
         LaunchedEffect(Unit) {
             showCreateSheet = false
-
         }
     }
 
@@ -139,10 +140,20 @@ fun ProjectsScreen(viewModel: ProjectsViewModel) {
                     }
                     items(uiState.userRelatedProjects[0]) { project ->
                         MainProjectCard(
-                            modifier = Modifier.clickable {
-                                selectProject(project)
-                            },
-                            projectCard = project
+                            projectCard = project,
+                            onClick = {
+                                viewModel.updateEditProjectId(project.id)
+                                viewModel.updateEditProjectTitle(project.name)
+                                viewModel.updateEditProjectShortDescription(project.shortDescription)
+                                viewModel.updateEditProjectLongDescription(project.longDescription)
+                                viewModel.updateEditProjectLookingFor(project.lookingFor.toString())
+                                viewModel.updateEditProjectRequiredSkills(project.requiredSkills.toString())
+                                viewModel.updateEditProjectTechnologies(project.technologies.toString())
+
+                                viewModel.getProjectRelatedUsers(project.id)
+                                viewModel.updateSelectedProject(project)
+                                onOpenCreatedProjectScreen(project)
+                            }
                         )
                     }
                 }
@@ -152,10 +163,8 @@ fun ProjectsScreen(viewModel: ProjectsViewModel) {
                     }
                     items(uiState.userRelatedProjects[1]) { project ->
                         MainProjectCard(
-                            modifier = Modifier.clickable {
-                                selectProject(project)
-                            },
-                            projectCard = project
+                            projectCard = project,
+                            onClick = {selectProject(project)}
                         )
                     }
                 }
@@ -165,10 +174,8 @@ fun ProjectsScreen(viewModel: ProjectsViewModel) {
                     }
                     items(uiState.userRelatedProjects[2]) { project ->
                         MainProjectCard(
-                            modifier = Modifier.clickable {
-                                selectProject(project)
-                            },
-                            projectCard = project
+                            projectCard = project,
+                            onClick = {selectProject(project)}
                         )
                     }
                 }
@@ -212,13 +219,28 @@ fun ProjectsScreen(viewModel: ProjectsViewModel) {
                         modifier = Modifier.fillMaxSize()
                             .padding(16.dp)
                     ) {
+
                         Text(text = selectedProject!!.name,
-                            style = MaterialTheme.typography.titleLarge.copy(fontSize = 35.sp),
+                            style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
                             modifier = Modifier.padding(10.dp))
 
                         ProjectCardDescriptionText(title = "Описание:", description = selectedProject!!.longDescription)
+
                         ProjectCardDescriptionListText(title = "Используемые технологии:", description = selectedProject!!.technologies)
                         ProjectCardDescriptionListText(title = "Требуемые навыки:", description = selectedProject!!.requiredSkills)
+                        ProjectCardDescriptionListText(title = "Требуются специалисты:", description = selectedProject!!.lookingFor)
+
+                        Text(text = "Участники:",
+                            modifier = Modifier.padding(horizontal = 10.dp),
+                            style = MaterialTheme.typography.titleMedium)
+                        LazyColumn(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                        ) {
+                            //TODO: сделать как в feed screen
+                        }
+
+                        ProjectCardDescriptionText(title = "Дата создания:", description = selectedProject!!.createDate.toString())
 
                         when (uiState.canApply){
                             true ->
@@ -265,20 +287,20 @@ fun ProjectsScreen(viewModel: ProjectsViewModel) {
 @Composable
 fun ProjectCardDescriptionText(title: String, description: String){
     Text(text = title,
-        modifier = Modifier.padding(10.dp),
-        style = MaterialTheme.typography.headlineMedium)
+        modifier = Modifier.padding(horizontal = 10.dp),
+        style = MaterialTheme.typography.titleMedium)
     Text(text = description,
-        modifier = Modifier.padding(10.dp),
+        modifier = Modifier.padding(horizontal = 10.dp),
         style = MaterialTheme.typography.bodyMedium)
 }
 
 @Composable
 fun ProjectCardDescriptionListText(title: String, description: List<String>){
     Text(text = title,
-        modifier = Modifier.padding(10.dp),
-        style = MaterialTheme.typography.headlineMedium)
+        modifier = Modifier.padding(horizontal = 10.dp),
+        style = MaterialTheme.typography.titleMedium)
     Text(text = description.joinToString(", "),
-        modifier = Modifier.padding(10.dp),
+        modifier = Modifier.padding(horizontal = 10.dp),
         style = MaterialTheme.typography.bodyMedium)
 }
 
@@ -294,67 +316,68 @@ fun MiniProjectsCategoryTitle(title: String){
 
 @Composable
 fun OpenProjectCreateDialog(viewModel: ProjectsViewModel, uiState: ProjectsUiState){
-
-    Text(text = "Название проекта:",style = MaterialTheme.typography.titleMedium)
-    StandardTextField(
-        value = uiState.createProjectTitle,
-        onValueChange = viewModel::updateCreateProjectTitle,
-        placeholderText = "StartApi",
-        keyboardType = KeyboardType.Text
-    )
-
-    Text(text = "Короткое описание:", style = MaterialTheme.typography.titleMedium)
-
-    StandardTextField(
-        value = uiState.createProjectShortDescription,
-        onValueChange = viewModel::updateCreateProjectShortDescription,
-        placeholderText = "StartApi - app for new startapp's",
-        keyboardType = KeyboardType.Text
-    )
-
-    Text(text = "Длинное описание:", style = MaterialTheme.typography.titleMedium)
-
-    StandardTextField(
-        value = uiState.createProjectLongDescription,
-        onValueChange = viewModel::updateCreateProjectLongDescription,
-        placeholderText = "We developing this app to allow students to...",
-        keyboardType = KeyboardType.Text
-    )
-
-    Text(text = "Используемые технологии:", style = MaterialTheme.typography.titleMedium)
-    StandardTextField(
-        value = uiState.createProjectTechnologies,
-        onValueChange = viewModel::updateCreateProjectTechnologies,
-        placeholderText = "Kotlin, Android, Firebase, JetpackCompose...",
-        keyboardType = KeyboardType.Text
-    )
-
-    Text(text = "Требуемые навыки:", style = MaterialTheme.typography.titleMedium)
-    StandardTextField(
-        value = uiState.createProjectRequiredSkills,
-        onValueChange = viewModel::updateCreateProjectRequiredSkills,
-        placeholderText = "MVVM, Kotlin",
-        keyboardType = KeyboardType.Text
-    )
-
-    Text(text = "Ищем специалистов:", style = MaterialTheme.typography.titleMedium)
-    StandardTextField(
-        value = uiState.createProjectLookingFor,
-        onValueChange = viewModel::updateCreateProjectLookingFor,
-        placeholderText = "Программист, дизайнер",
-        keyboardType = KeyboardType.Text
-    )
-
-    Button(onClick = {viewModel.createProject()}) {
-        Text(
-            text = "Создать",
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(10.dp),
-            textAlign = TextAlign.Center
+        Text(text = "Название проекта:",style = MaterialTheme.typography.titleMedium)
+        StandardTextField(
+            value = uiState.createProjectTitle,
+            onValueChange = viewModel::updateCreateProjectTitle,
+            placeholderText = "StartApi",
+            keyboardType = KeyboardType.Text
         )
-    }
+    
+        Text(text = "Короткое описание:", style = MaterialTheme.typography.titleMedium)
+    
+        StandardTextField(
+            value = uiState.createProjectShortDescription,
+            onValueChange = viewModel::updateCreateProjectShortDescription,
+            placeholderText = "StartApi - app for new startapp's",
+            keyboardType = KeyboardType.Text
+        )
+    
+        Text(text = "Длинное описание:", style = MaterialTheme.typography.titleMedium)
+    
+        StandardTextField(
+            value = uiState.createProjectLongDescription,
+            onValueChange = viewModel::updateCreateProjectLongDescription,
+            placeholderText = "We developing this app to allow students to...",
+            keyboardType = KeyboardType.Text
+        )
+    
+        Text(text = "Используемые технологии:", style = MaterialTheme.typography.titleMedium)
+        StandardTextField(
+            value = uiState.createProjectTechnologies,
+            onValueChange = viewModel::updateCreateProjectTechnologies,
+            placeholderText = "Kotlin, Android, Firebase, JetpackCompose...",
+            keyboardType = KeyboardType.Text
+        )
+    
+        Text(text = "Требуемые навыки:", style = MaterialTheme.typography.titleMedium)
+        StandardTextField(
+            value = uiState.createProjectRequiredSkills,
+            onValueChange = viewModel::updateCreateProjectRequiredSkills,
+            placeholderText = "MVVM, Kotlin",
+            keyboardType = KeyboardType.Text
+        )
+    
+        Text(text = "Ищем специалистов:", style = MaterialTheme.typography.titleMedium)
+        StandardTextField(
+            value = uiState.createProjectLookingFor,
+            onValueChange = viewModel::updateCreateProjectLookingFor,
+            placeholderText = "Программист, дизайнер",
+            keyboardType = KeyboardType.Text
+        )
+    
+        Button(onClick = {viewModel.createProject()}) {
+            Text(
+                text = "Создать",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(10.dp),
+                textAlign = TextAlign.Center
+            )
+        }
 }
+
+
 
 @Composable
 @Preview

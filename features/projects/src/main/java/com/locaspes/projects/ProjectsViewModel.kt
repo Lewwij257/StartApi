@@ -27,7 +27,10 @@ class ProjectsViewModel @Inject constructor(
 
     init {
         loadUserRelatedProjects()
+        Log.d("ViewModelDebug", "ViewModel instance created: $this")
+
     }
+
 
     fun loadUserRelatedProjects() {
         viewModelScope.launch {
@@ -37,6 +40,19 @@ class ProjectsViewModel @Inject constructor(
         }
     }
 
+    fun acceptUsersApplication(projectId: String, userId: String){
+        viewModelScope.launch {
+            projectsUseCase.acceptUserApplication(projectId, userId)
+        }
+    }
+
+    fun declineUsersApplication(projectId: String, userId: String){
+        viewModelScope.launch {
+            projectsUseCase.declineUserApplication(projectId, userId)
+
+        }
+
+    }
 
 
     fun changeCanApplyState(projectId: String){
@@ -99,6 +115,15 @@ class ProjectsViewModel @Inject constructor(
         }
     }
 
+    fun getProjectRelatedUsers(projectId: String){
+        viewModelScope.launch {
+            val projectRelatedUsersResult = projectsUseCase.getProjectRelatedUsers(projectId)
+            if (projectRelatedUsersResult.isSuccess){
+                _uiState.update { it.copy(projectRelatedUsers = projectRelatedUsersResult.getOrNull()!!) }
+            }
+        }
+    }
+
     fun updateCreateProjectTitle(title: String) {
         _uiState.update { it.copy(createProjectTitle = title) }
     }
@@ -121,5 +146,56 @@ class ProjectsViewModel @Inject constructor(
 
     fun updateCreateProjectTechnologies(technologies: String) {
         _uiState.update { it.copy(createProjectTechnologies = technologies) }
+    }
+
+    fun updateProjectForEdit(project: ProjectCard){
+        _uiState.update { it.copy(projectToEdit = project) }
+    }
+
+    fun updateEditProjectId(projectId: String){
+        _uiState.update { it.copy(editProjectId = projectId) }
+    }
+
+    //TODO:
+
+    fun updateEditProjectTitle(title: String) {
+        _uiState.update { it.copy(editProjectTitle = title) }
+        Log.d("ViewModelDebug", "Updated title: $title")
+    }
+
+    fun updateEditProjectShortDescription(shortDescription: String) {
+        _uiState.update { it.copy(editProjectShortDescription = shortDescription) }
+    }
+
+    fun updateEditProjectLongDescription(longDescription: String) {
+        _uiState.update { it.copy(editProjectLongDescription = longDescription) }
+    }
+
+    fun updateEditProjectLookingFor(lookingFor: String) {
+        _uiState.update { it.copy(editProjectLookingFor = lookingFor) }
+    }
+
+    fun updateEditProjectRequiredSkills(requiredSkills: String) {
+        _uiState.update { it.copy(editProjectRequiredSkills = requiredSkills) }
+    }
+
+    fun updateEditProjectTechnologies(technologies: String) {
+        _uiState.update { it.copy(editProjectTechnologies = technologies) }
+    }
+
+    fun updateEditProjectApplies(applies: List<String>) {
+        _uiState.update { it.copy(editProjectApplies = applies) }
+    }
+
+    fun updateEditProjectAccepted(accepted: List<String>) {
+        _uiState.update { it.copy(editProjectAccepted = accepted) }
+    }
+
+    fun updateEditProjectCreator(creator: String) {
+        _uiState.update { it.copy(editProjectCreator = creator) }
+    }
+
+    fun updateSelectedProject(project: ProjectCard){
+        _uiState.update { it.copy(selectedProject = project) }
     }
 }

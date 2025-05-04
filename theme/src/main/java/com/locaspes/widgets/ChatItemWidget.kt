@@ -2,6 +2,7 @@ package com.locaspes.widgets
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,11 +29,12 @@ import com.locaspes.theme.R
 @Composable
 fun ChatItemWidget(
     onClick: () -> Unit,
-    chatItem: ChatItem
+    chatItem: ChatItem,
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
+            .clickable { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         // Аватар
@@ -50,7 +53,8 @@ fun ChatItemWidget(
         ) {
             Text(
                 text = chatItem.projectName,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleMedium
             )
             Text(
                 text = chatItem.lastMessage
@@ -60,10 +64,10 @@ fun ChatItemWidget(
         Column(
             modifier = Modifier
         ) {
-            Text(
-                text = chatItem.lastMessageDate,
-                Modifier.padding(end = 16.dp)
-            )
+//            Text(
+//                text = chatItem.lastMessageDate,
+//                Modifier.padding(end = 16.dp)
+//            )
 
             if (chatItem.hasNewMessages) {
                 Text(

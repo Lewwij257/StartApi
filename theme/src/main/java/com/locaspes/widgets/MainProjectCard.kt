@@ -4,6 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -31,12 +32,14 @@ import java.util.Date
 @Composable
 fun MainProjectCard(
     projectCard: ProjectCard,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .clickable { onClick() },
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp), // Добавляем тень
         shape = RoundedCornerShape(12.dp), // Увеличиваем радиус углов для современного вида
         colors = CardDefaults.cardColors(

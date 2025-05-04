@@ -1,6 +1,7 @@
 package com.locaspes.startapi
 
-import android.service.autofill.UserData
+import android.os.Build
+import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -25,16 +26,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.locaspes.data.UserDataRepository
-import com.locaspes.data.UserDataStore
-import com.locaspes.data.registration.FirebaseRegistrationRepository
-//import com.android.tools.screenshot.isValid
 import com.locaspes.stellaristheme.AppTypography
-import com.locaspes.stellaristheme.StellarisAppTheme
+import com.locaspes.utils.AuthValidationError
 
+@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 fun SignUp(
     viewModel: SignUpViewModel,
@@ -96,6 +94,28 @@ fun SignUp(
                 keyboardType = KeyboardType.Text
             )
         )
+
+        uiState.validationErrors.forEach { error ->
+            when (error) {
+                AuthValidationError.EmptyUsername -> Text(
+                    text = "Имя пользователя не может быть пустым",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+                AuthValidationError.ShortUsername -> Text(
+                    text = "Имя пользователя должно быть длиннее 3 символов",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+                AuthValidationError.LongUsername -> Text(
+                    text = "Дружище, полегче, очень длинно",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+                else -> Unit
+            }
+        }
+
         Text(
             text = "Email",
             style = AppTypography.bodyLarge,
@@ -129,9 +149,26 @@ fun SignUp(
                 )
             },
             keyboardOptions = KeyboardOptions.Default.copy(
-                keyboardType = KeyboardType.Text
+                keyboardType = KeyboardType.Email
             )
         )
+
+        uiState.validationErrors.forEach { error ->
+            when (error) {
+                AuthValidationError.EmptyEmail -> Text(
+                    text = "Email не может быть пустым",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+                AuthValidationError.InvalidEmail -> Text(
+                    text = "Некорректный формат email",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+                else -> Unit
+            }
+        }
+
         Text(
             text = "Пароль",
             modifier = Modifier
@@ -141,7 +178,6 @@ fun SignUp(
             style = AppTypography.bodyLarge,
             fontSize = 20.sp
         )
-
         TextField(
             value = uiState.password,
             onValueChange = viewModel::updatePassword,
@@ -162,35 +198,50 @@ fun SignUp(
             },
             keyboardOptions = KeyboardOptions.Default.copy(
                 keyboardType = KeyboardType.Text
-            )
+            ),
+            visualTransformation = PasswordVisualTransformation()
         )
 
-        if (uiState.isLoading) {
+        uiState.validationErrors.forEach { error ->
+            when (error) {
+                AuthValidationError.EmptyPassword -> Text(
+                    text = "Пароль не должен быть пустым",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+                AuthValidationError.ShortPassword -> Text(
+                    text = "Пароль должен быть длиннее 5 символов",
+                    color = MaterialTheme.colorScheme.error,
+                    modifier = Modifier.padding(start = 20.dp)
+                )
+                else -> Unit
+            }
+        }
+
+        if (uiState is SignUpUiState.Loading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
         }
 
-        uiState.errorMessage?.let { error ->
+        if (uiState is SignUpUiState.Error && (uiState as SignUpUiState.Error).message.isNotEmpty()) {
             Text(
-                text = error,
+                text = (uiState as SignUpUiState.Error).message,
                 color = MaterialTheme.colorScheme.error,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
         }
 
-        if (uiState.isSignUpSuccessful) {
-            LaunchedEffect(Unit) {
+        if (uiState is SignUpUiState.Success){
+            LaunchedEffect(Unit){
                 onRegisterSuccess()
             }
         }
 
-        //TODO: тест
         Button(
             onClick = viewModel::signUp,
-            //onClick = {viewModel.debugFakeRegistration()},
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 36.dp)
                 .fillMaxWidth(),
-            enabled = !uiState.isLoading
+            enabled = uiState !is SignUpUiState.Loading
         ) {
             Text(
                 "Продолжить", fontSize = 20.sp
@@ -211,7 +262,6 @@ fun SignUp(
                 color = MaterialTheme.colorScheme.onBackground,
                 fontSize = 16.sp
             )
-
             TextButton(
                 onClick = onLogInButtonClicked,
             ) {
@@ -220,7 +270,5 @@ fun SignUp(
                 )
             }
         }
-
-
     }
 }

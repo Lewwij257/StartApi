@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.firestore.DocumentSnapshot
 import com.locaspes.FeedUseCase
 import com.locaspes.data.UserDataRepository
+import com.locaspes.data.model.ProjectCard
 import com.locaspes.data.user.FirebaseUserActionsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,15 +23,40 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
 
     private val _uiState = MutableStateFlow(FeedUiState())
     val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
+    var userId: String = ""
 
     private var isLoading = false
 
     init {
         loadProjects()
+        viewModelScope.launch {
+            userId = userDataRepository.getUserProfile().first()?.id ?: ""
+        }
     }
 
     fun updateCanApply(canApply: Boolean?){
         _uiState.update { it.copy(canApply = canApply) }
+    }
+
+    fun unfollowProject(projectId: String) {
+        viewModelScope.launch {
+            try {
+                feedUseCase.unfollowProject(projectId)
+                // Обновляем локальные данные
+                _uiState.update { state ->
+                    val updatedProjects = state.projects.map { project ->
+                        if (project.id == projectId) {
+                            project.copy(usersAccepted = project.usersAccepted - userId)
+                        } else {
+                            project
+                        }
+                    }
+                    state.copy(projects = updatedProjects)
+                }
+            } catch (e: Exception) {
+                // Обработка ошибки
+            }
+        }
     }
 
     fun updateSearch(searchText: String){
@@ -69,7 +95,9 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
     fun changeCanApplyState(projectId: String){
         viewModelScope.launch {
             try{
-                _uiState.update { it.copy( canApply = !(feedUseCase.checkIfUserAppliedToProject(userDataRepository.getUserId().first()!!, projectId))) }
+                _uiState.update { it.copy(
+                    canApply =
+                    !(feedUseCase.checkIfUserAppliedToProject(userDataRepository.getUserProfile().first()!!.id, projectId))) }
                 Log.d("FirebaseUserActionsRepository", uiState.value.canApply.toString())
             }
             catch (e: Exception){
@@ -78,10 +106,21 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
         }
     }
 
+    fun changeAuthorState(projectCard: ProjectCard){
+        viewModelScope.launch {
+            if (projectCard.author == userDataRepository.getUserProfile().first()!!.id){
+                _uiState.update { it.copy( isAuthorState = true) }
+            }
+            else{
+                _uiState.update { it.copy( isAuthorState = false) }
+            }
+        }
+    }
+
     fun applyUserToProject(projectId: String){
         viewModelScope.launch {
             _uiState.update{it.copy(canApply = null)}
-            feedUseCase.applyUserToProject(userDataRepository.getUserId().first()!!, projectId)
+            feedUseCase.applyUserToProject(userDataRepository.getUserProfile().first()!!.id, projectId)
             changeCanApplyState(projectId)
         }
     }
@@ -91,10 +130,19 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
             _uiState.update{it.copy(canApply = null)}
             feedUseCase.cancelUserApplication(projectId)
             changeCanApplyState(projectId)
-
         }
     }
 
-
-
+    fun getProjectRelatedUsers(projectId: String) {
+        viewModelScope.launch {
+            val projectRelatedUsers = feedUseCase.getProjectRelatedUsers(projectId)
+            if (projectRelatedUsers.isSuccess) {
+                Log.d("getProjectRelatedUsers", "success")
+                _uiState.update { it.copy(projectParticipants = projectRelatedUsers.getOrNull()!!) }
+            }
+            else{
+                Log.d("getProjectRelatedUsers", "error")
+            }
+        }
+    }
 }

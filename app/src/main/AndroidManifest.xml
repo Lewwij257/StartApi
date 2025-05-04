@@ -19,6 +19,7 @@
         tools:targetApi="34">
         <activity
             android:name="com.locaspes.startapi.MainActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.StellarisAppTheme">

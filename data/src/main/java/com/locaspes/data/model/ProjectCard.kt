@@ -12,5 +12,7 @@ data class ProjectCard(
     val requiredSkills: List<String> = emptyList(),
     val technologies: List<String> = emptyList(),
     var author: String = "",
-    var createDate: Timestamp = Timestamp.now()
+    var createDate: Timestamp = Timestamp.now(),
+    val usersApplied: List<String> = emptyList(),
+    val usersAccepted: List<String> = emptyList()
 )

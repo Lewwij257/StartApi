@@ -1,5 +1,19 @@
 [versions]
 
+
+junit = "4.13.2" # Без изменений
+junitVersion = "1.2.1" # Без изменений
+mockitoCore = "5.14.0" # Обновлено
+mockitoKotlin = "5.3.1" # Без изменений
+mockk = "1.13.13" # Обновлено
+kotlinxCoroutinesTest = "1.10.2" # Обновлено
+coreTesting = "2.3.0" # Обновлено
+espressoCore = "3.6.1" # Без изменений
+uiTestJunit4Android = "1.8.0" # Без изменений
+truth = "1.4.2" # Без изменений
+
+coilCompose = "3.1.0"
+coilNetworkOkhttp = "3.1.0"
 javapoet = "1.13.0"
 ksp = "2.0.21-1.0.27"
 agp = "8.8.0"
@@ -9,9 +23,7 @@ hiltAndroid = "2.55"
 hiltAndroidCompiler = "2.55"
 kotlin = "2.0.21"
 coreKtx = "1.15.0"
-junit = "4.13.2"
-junitVersion = "1.2.1"
-espressoCore = "3.6.1"
+
 lifecycleRuntimeKtx = "2.8.7"
 activityCompose = "1.10.0"
 composeBom = "2025.02.00"
@@ -39,7 +51,10 @@ firebaseCommonKtx = "21.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
 androidx-runtime = { module = "androidx.compose.runtime:runtime" }
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coilCompose" }
+coil-network-okhttp = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coilNetworkOkhttp" }
 firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
@@ -62,8 +77,12 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
+kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 androidx-runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroid" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlin" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
 screenshot-validation-junit-engine = { group = "com.android.tools.screenshot", name = "screenshot-validation-junit-engine", version.ref = "screenshotValidationJunitEngine" }
 androidx-foundation-android = { group = "androidx.compose.foundation", name = "foundation-android", version.ref = "foundationAndroid" }
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
@@ -78,9 +97,11 @@ androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.
 testng = { group = "org.testng", name = "testng", version.ref = "testng" }
 androidx-foundation-layout-android = { group = "androidx.compose.foundation", name = "foundation-layout-android", version.ref = "foundationLayoutAndroid" }
 androidx-ui-tooling-preview-android = { group = "androidx.compose.ui", name = "ui-tooling-preview-android", version.ref = "uiToolingPreviewAndroid" }
+truth = { module = "com.google.truth:truth", version.ref = "truth" }
 ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling", version.ref = "uiTooling" }
 firebase-firestore-ktx = { group = "com.google.firebase", name = "firebase-firestore-ktx", version.ref = "firebaseFirestoreKtx" }
 firebase-common-ktx = { group = "com.google.firebase", name = "firebase-common-ktx", version.ref = "firebaseCommonKtx" }
+androidx-ui-test-junit4-android = { group = "androidx.compose.ui", name = "ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
 
 
 [plugins]
