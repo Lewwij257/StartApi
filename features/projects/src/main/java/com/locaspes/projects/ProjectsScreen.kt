@@ -140,7 +140,8 @@ fun ProjectsScreen(
                     }
                     items(uiState.userRelatedProjects[0]) { project ->
                         MainProjectCard(
-                            modifier = Modifier.clickable {
+                            projectCard = project,
+                            onClick = {
                                 viewModel.updateEditProjectId(project.id)
                                 viewModel.updateEditProjectTitle(project.name)
                                 viewModel.updateEditProjectShortDescription(project.shortDescription)
@@ -152,8 +153,7 @@ fun ProjectsScreen(
                                 viewModel.getProjectRelatedUsers(project.id)
                                 viewModel.updateSelectedProject(project)
                                 onOpenCreatedProjectScreen(project)
-                            },
-                            projectCard = project
+                            }
                         )
                     }
                 }
@@ -163,10 +163,8 @@ fun ProjectsScreen(
                     }
                     items(uiState.userRelatedProjects[1]) { project ->
                         MainProjectCard(
-                            modifier = Modifier.clickable {
-                                selectProject(project)
-                            },
-                            projectCard = project
+                            projectCard = project,
+                            onClick = {selectProject(project)}
                         )
                     }
                 }
@@ -176,10 +174,8 @@ fun ProjectsScreen(
                     }
                     items(uiState.userRelatedProjects[2]) { project ->
                         MainProjectCard(
-                            modifier = Modifier.clickable {
-                                selectProject(project)
-                            },
-                            projectCard = project
+                            projectCard = project,
+                            onClick = {selectProject(project)}
                         )
                     }
                 }
@@ -225,7 +221,7 @@ fun ProjectsScreen(
                     ) {
 
                         Text(text = selectedProject!!.name,
-                            style = MaterialTheme.typography.titleLarge.copy(fontSize = 35.sp),
+                            style = MaterialTheme.typography.titleLarge.copy(fontSize = 30.sp),
                             modifier = Modifier.padding(10.dp))
 
                         ProjectCardDescriptionText(title = "Описание:", description = selectedProject!!.longDescription)
@@ -291,20 +287,20 @@ fun ProjectsScreen(
 @Composable
 fun ProjectCardDescriptionText(title: String, description: String){
     Text(text = title,
-        modifier = Modifier.padding(10.dp),
-        style = MaterialTheme.typography.headlineMedium)
+        modifier = Modifier.padding(horizontal = 10.dp),
+        style = MaterialTheme.typography.titleMedium)
     Text(text = description,
-        modifier = Modifier.padding(10.dp),
+        modifier = Modifier.padding(horizontal = 10.dp),
         style = MaterialTheme.typography.bodyMedium)
 }
 
 @Composable
 fun ProjectCardDescriptionListText(title: String, description: List<String>){
     Text(text = title,
-        modifier = Modifier.padding(10.dp),
-        style = MaterialTheme.typography.headlineMedium)
+        modifier = Modifier.padding(horizontal = 10.dp),
+        style = MaterialTheme.typography.titleMedium)
     Text(text = description.joinToString(", "),
-        modifier = Modifier.padding(10.dp),
+        modifier = Modifier.padding(horizontal = 10.dp),
         style = MaterialTheme.typography.bodyMedium)
 }
 
@@ -320,7 +316,6 @@ fun MiniProjectsCategoryTitle(title: String){
 
 @Composable
 fun OpenProjectCreateDialog(viewModel: ProjectsViewModel, uiState: ProjectsUiState){
-
         Text(text = "Название проекта:",style = MaterialTheme.typography.titleMedium)
         StandardTextField(
             value = uiState.createProjectTitle,
@@ -381,6 +376,8 @@ fun OpenProjectCreateDialog(viewModel: ProjectsViewModel, uiState: ProjectsUiSta
             )
         }
 }
+
+
 
 @Composable
 @Preview

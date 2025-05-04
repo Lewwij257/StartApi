@@ -19,9 +19,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MessengerViewModel @Inject constructor(
-    private val messengerUseCase: MessengerUseCase,
-    private val userDataRepository: UserDataRepository
-) : ViewModel() {
+    private val messengerUseCase: MessengerUseCase) : ViewModel() {
 
     private val _uiState = MutableStateFlow(MessengerUiState())
     val uiState: StateFlow<MessengerUiState> = _uiState.asStateFlow()
@@ -37,8 +35,6 @@ class MessengerViewModel @Inject constructor(
         _uiState.update { it.copy(openChatScreen = true) }
         loadMessages(chatId)
     }
-
-
 
     fun loadChatList(){
         viewModelScope.launch {
@@ -100,8 +96,11 @@ class MessengerViewModel @Inject constructor(
 
     private fun loadUserProfile() {
         viewModelScope.launch {
-            val userProfile = userDataRepository.getUserProfile().first()!!
-            _uiState.update { it.copy(userProfile = userProfile) }
+            val getUserProfileResult = messengerUseCase.getUserProfile()
+            if (getUserProfileResult.isSuccess){
+                _uiState.update { it.copy(userProfile = getUserProfileResult.getOrNull()!!) }
+            }
+
         }
     }
 

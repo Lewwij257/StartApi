@@ -62,6 +62,7 @@ fun MessengerScreen(
                 ) {
 
                     items(uiState.messages) { message ->
+                        Log.d("trakataka", message.senderProfileAvatar)
                         MessageWidget(
                             message = message,
                             profileImagePainter = rememberAsyncImagePainter(message.senderProfileAvatar),
@@ -100,7 +101,6 @@ fun MessengerScreen(
                 }
             }
             else{
-                Log.d("MessengerScreen", "openChatScreen = false, openAllChats")
                 // Экран списка чатов
                 LazyColumn(
                     modifier = Modifier

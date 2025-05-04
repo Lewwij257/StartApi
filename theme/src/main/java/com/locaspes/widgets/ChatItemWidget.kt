@@ -29,7 +29,7 @@ import com.locaspes.theme.R
 @Composable
 fun ChatItemWidget(
     onClick: () -> Unit,
-    chatItem: ChatItem
+    chatItem: ChatItem,
 ) {
     Row(
         modifier = Modifier

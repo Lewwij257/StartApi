@@ -1,5 +1,6 @@
 package com.locaspes.ui
 
+import android.icu.text.SimpleDateFormat
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -49,6 +50,7 @@ import com.locaspes.data.user.FirebaseUserActionsRepository
 import com.locaspes.widgets.MainProjectCard
 import com.locaspes.widgets.ProfileListItem
 import kotlinx.coroutines.launch
+import java.util.Locale
 import kotlin.math.log
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -64,6 +66,13 @@ fun FeedScreen(viewModel: FeedViewModel){
 //    LaunchedEffect(Unit) {
 //        viewModel.loadProjects()
 //    }
+
+    LaunchedEffect(uiState.projects) {
+        selectedProject?.let { currentProject ->
+            val updatedProject = uiState.projects.find { it.id == currentProject.id }
+            selectedProject = updatedProject ?: currentProject
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -103,7 +112,7 @@ fun FeedScreen(viewModel: FeedViewModel){
         LazyColumn {
             itemsIndexed(uiState.projects) { index, project ->
                 MainProjectCard(
-                    modifier = Modifier.clickable {
+                    onClick = {
                         selectedProject = project
                         scope.launch { sheetState.show() }
                     },
@@ -188,7 +197,10 @@ fun FeedScreen(viewModel: FeedViewModel){
 
                     }
 
-                    ProjectCardDescriptionText(title = "Дата создания:", description = selectedProject!!.createDate.toString())
+                    ProjectCardDescriptionText(title = "Дата создания:",
+                        description = selectedProject!!.createDate.toDate().let { date ->
+                            SimpleDateFormat("dd.MM.yyyy HH.mm", Locale.getDefault()).format(date)
+                        })
 
                     Log.d("FeedScreen", "users accepted: ${selectedProject!!.usersAccepted}, userId: ${viewModel.userId}")
                     if (selectedProject!!.usersAccepted.contains(viewModel.userId)) {
@@ -196,6 +208,7 @@ fun FeedScreen(viewModel: FeedViewModel){
                         Button(
                             onClick = {
                                 viewModel.unfollowProject(selectedProject!!.id)
+                                viewModel.loadProjects()
                             },
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -203,7 +216,6 @@ fun FeedScreen(viewModel: FeedViewModel){
                             colors = ButtonDefaults.buttonColors(MaterialTheme.colorScheme.error)
                         ) {
                             Text("Отписаться от проекта")
-                            //TODO: Не меняется кнопка!!!
                         }
                     }
                     else if (!uiState.isAuthorState){

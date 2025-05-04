@@ -279,8 +279,6 @@ class FirebaseUserActionsRepository @Inject constructor(
         catch (e: Exception){
             Result.failure(Exception("ошибка: ${e.message}"))
         }
-
-
     }
 
     override suspend fun checkUserAcceptedToProject(projectId: String): Boolean {

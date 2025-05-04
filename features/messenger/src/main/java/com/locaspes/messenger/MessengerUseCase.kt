@@ -37,4 +37,8 @@ class MessengerUseCase @Inject constructor(
         return firebaseUserActionsRepository.sendMessage(message)
     }
 
+    suspend fun getUserProfile(): Result<UserProfile> {
+        return firebaseUserActionsRepository.getUserProfile(userDataRepository.getUserProfile().first()!!.id)
+    }
+
 }

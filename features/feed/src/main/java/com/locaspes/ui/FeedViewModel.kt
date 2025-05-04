@@ -30,7 +30,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
     init {
         loadProjects()
         viewModelScope.launch {
-            userId = userDataRepository.getUserProfile().first()!!.id
+            userId = userDataRepository.getUserProfile().first()?.id ?: ""
         }
     }
 
@@ -38,10 +38,24 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
         _uiState.update { it.copy(canApply = canApply) }
     }
 
-    fun unfollowProject(projectId: String){
+    fun unfollowProject(projectId: String) {
         viewModelScope.launch {
-            feedUseCase.unfollowProject(projectId)
-            changeCanApplyState(projectId)
+            try {
+                feedUseCase.unfollowProject(projectId)
+                // Обновляем локальные данные
+                _uiState.update { state ->
+                    val updatedProjects = state.projects.map { project ->
+                        if (project.id == projectId) {
+                            project.copy(usersAccepted = project.usersAccepted - userId)
+                        } else {
+                            project
+                        }
+                    }
+                    state.copy(projects = updatedProjects)
+                }
+            } catch (e: Exception) {
+                // Обработка ошибки
+            }
         }
     }
 

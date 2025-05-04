@@ -137,44 +137,82 @@ class FirebaseFeedRepository @Inject constructor(
 
     override suspend fun getProjectRelatedUsers(projectId: String): Result<List<List<UserProfile>>> {
         return try {
+            Log.d("ProjectUsers", "Starting getProjectRelatedUsers for projectId: $projectId")
+
+            // 1. Получаем документ проекта
+            Log.d("ProjectUsers", "Fetching project document...")
             val projectDocumentSnapshot = projectsDatabaseRef.document(projectId).get().await()
+            Log.d("ProjectUsers", "Project document snapshot exists: ${projectDocumentSnapshot.exists()}")
+            Log.d("ProjectUsers", "Full project data: ${projectDocumentSnapshot.data}")
+            // 2. Извлекаем списки пользователей
             val appliedUserList = projectDocumentSnapshot.get("usersApplied") as? List<String> ?: emptyList()
             val acceptedUsersList = projectDocumentSnapshot.get("usersAccepted") as? List<String> ?: emptyList()
-            val creatorUserList = projectDocumentSnapshot.get("author") as? List<String> ?: emptyList()
+            val creatorUserList = listOf(projectDocumentSnapshot.get("author") as? String ?: "").filter { it.isNotEmpty() }
+
+            Log.d("ProjectUsers", "Applied users IDs: $appliedUserList")
+            Log.d("ProjectUsers", "Accepted users IDs: $acceptedUsersList")
+            Log.d("ProjectUsers", "Creator user ID: $creatorUserList")
 
             val projectRelatedUsers = listOf(appliedUserList, acceptedUsersList, creatorUserList)
+            Log.d("ProjectUsers", "All user lists combined: $projectRelatedUsers")
 
-            if (projectRelatedUsers.any{it.isNotEmpty()}){
-                val usersApplied = if (projectRelatedUsers[0].isNotEmpty()){
-                    usersDatabaseRef.whereIn("id", projectRelatedUsers[0]).get().await()
-                        .documents.mapNotNull { documentSnapshot ->
-                            documentSnapshot.toObject(UserProfile::class.java)?.copy(id = documentSnapshot.id)
-                        }
-                } else emptyList()
+            // 3. Проверяем, есть ли вообще пользователи
+            if (projectRelatedUsers.any { it.isNotEmpty() }) {
+                Log.d("ProjectUsers", "Found non-empty user lists, proceeding to fetch user details")
 
-                val userAccepted = if (projectRelatedUsers[1].isNotEmpty()){
-                    usersDatabaseRef.whereIn("id", projectRelatedUsers[1]).get().await()
-                        .documents.mapNotNull { documentSnapshot ->
-                            documentSnapshot.toObject(UserProfile::class.java)?.copy(id = documentSnapshot.id)
+                // 4. Запрашиваем данные пользователей
+                val usersApplied = if (projectRelatedUsers[0].isNotEmpty()) {
+                    Log.d("ProjectUsers", "Fetching applied users...")
+                    val querySnapshot = usersDatabaseRef.whereIn("id", projectRelatedUsers[0]).get().await()
+                    Log.d("ProjectUsers", "Applied users query result count: ${querySnapshot.documents.size}")
+                    querySnapshot.documents.mapNotNull { documentSnapshot ->
+                        documentSnapshot.toObject(UserProfile::class.java)?.copy(id = documentSnapshot.id).also {
+                            Log.d("ProjectUsers", "Applied user loaded: ${documentSnapshot.id}")
                         }
-                } else emptyList()
+                    }
+                } else {
+                    Log.d("ProjectUsers", "No applied users to fetch")
+                    emptyList()
+                }
 
-                val userCreatorList = if (projectRelatedUsers[2].isNotEmpty()){
-                    usersDatabaseRef.whereIn("id", projectRelatedUsers[2]).get().await()
-                        .documents.mapNotNull { documentSnapshot ->
-                            documentSnapshot.toObject(UserProfile::class.java)?.copy(id = documentSnapshot.id)
+                val userAccepted = if (projectRelatedUsers[1].isNotEmpty()) {
+                    Log.d("ProjectUsers", "Fetching accepted users...")
+                    val querySnapshot = usersDatabaseRef.whereIn("id", projectRelatedUsers[1]).get().await()
+                    Log.d("ProjectUsers", "Accepted users query result count: ${querySnapshot.documents.size}")
+                    querySnapshot.documents.mapNotNull { documentSnapshot ->
+                        documentSnapshot.toObject(UserProfile::class.java)?.copy(id = documentSnapshot.id).also {
+                            Log.d("ProjectUsers", "Accepted user loaded: ${documentSnapshot.id}")
                         }
-                } else emptyList()
+                    }
+                } else {
+                    Log.d("ProjectUsers", "No accepted users to fetch")
+                    emptyList()
+                }
+
+                val userCreatorList = if (projectRelatedUsers[2].isNotEmpty()) {
+                    Log.d("ProjectUsers", "Fetching creator user...")
+                    val querySnapshot = usersDatabaseRef.whereIn("id", projectRelatedUsers[2]).get().await()
+                    Log.d("ProjectUsers", "Creator user query result count: ${querySnapshot.documents.size}")
+                    querySnapshot.documents.mapNotNull { documentSnapshot ->
+                        documentSnapshot.toObject(UserProfile::class.java)?.copy(id = documentSnapshot.id).also {
+                            Log.d("ProjectUsers", "Creator user loaded: ${documentSnapshot.id}")
+                        }
+                    }
+                } else {
+                    Log.d("ProjectUsers", "No creator user to fetch")
+                    emptyList()
+                }
 
                 val users = listOf(usersApplied, userAccepted, userCreatorList)
-                Log.d("getProjectRelatedUsers", "project related users: $users")
+                Log.d("ProjectUsers", "Final result - Applied: ${usersApplied.size}, Accepted: ${userAccepted.size}, Creator: ${userCreatorList.size}")
                 Result.success(users)
-            }
-            else
+            } else {
+                Log.d("ProjectUsers", "All user lists are empty")
                 Result.success(emptyList())
-        }
-        catch (e: Exception){
-            Result.failure(Exception("Не удалось загрузить : ${e.message}"))
+            }
+        } catch (e: Exception) {
+            Log.e("ProjectUsers", "Error in getProjectRelatedUsers: ${e.message}", e)
+            Result.failure(Exception("Не удалось загрузить пользователей: ${e.message}"))
         }
     }
 
