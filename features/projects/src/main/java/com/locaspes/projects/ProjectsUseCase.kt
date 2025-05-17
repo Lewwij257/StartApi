@@ -45,4 +45,7 @@ class ProjectsUseCase @Inject constructor(
     suspend fun declineUserApplication(projectId: String, userId: String): Result<String>{
         return firebaseUserActionsRepository.declineUserApplicationToProject(projectId, userId)
     }
+    suspend fun saveEditedProject(projectCard: ProjectCard): Result<String>{
+        return firebaseUserActionsRepository.saveEditedProject(projectCard)
+    }
 }
