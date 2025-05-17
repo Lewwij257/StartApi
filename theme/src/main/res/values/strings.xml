@@ -1,7 +1,13 @@
 <resources>
-    <string name="title_activity_welcome">WelcomeActivity</string>
-    <string name="StartApi">StartApi</string>
-    <string name="StartApiBeta">StartApi Beta 1.0</string>
-    <string name="unite_create_conquer">unite create conquer</string>
-    <string name="title_activity_main">com.locaspes.home.MainActivity</string>
+    <!-- Sign-in screen -->
+    <string name="sign_in_title">Вход</string>
+    <string name="username_or_email">Имя пользователя или email</string>
+    <string name="password">Пароль</string>
+    <string name="continue_button">Продолжить</string>
+    <string name="no_account">Нет аккаунта?</string>
+    <string name="register">Зарегистрироваться</string>
+    <string name="invalid_username">Неверное имя пользователя или email</string>
+    <string name="invalid_password">Неверный пароль</string>
+    <string name="username_icon_desc">Иконка имени пользователя</string>
+    <string name="password_icon_desc">Иконка пароля</string>
 </resources>

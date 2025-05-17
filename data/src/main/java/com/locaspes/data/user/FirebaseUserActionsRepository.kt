@@ -5,6 +5,7 @@ import com.google.firebase.FirebaseException
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.firestore.auth.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -287,6 +288,42 @@ class FirebaseUserActionsRepository @Inject constructor(
         val projectsAccepted = userDocument.get("projectsAccepted") as? List<String> ?: emptyList()
         Log.d("FirebaseUserActionsRepository", "contains project - ${projectsAccepted.contains(projectId)} ")
         return projectsAccepted.contains(projectId)
+    }
+
+    override suspend fun saveEditedProject(projectCard: ProjectCard): Result<String> {
+        return try {
+            val documentRef = dataBase.collection("Projects").document(projectCard.id)
+            val projectCardToEdit = documentRef.get().await()
+
+            if (projectCardToEdit.exists()) {
+                val updatedFields = mapOf(
+                    "name" to projectCard.name,
+                    "shortDescription" to projectCard.shortDescription,
+                    "longDescription" to projectCard.longDescription,
+                    "lookingFor" to projectCard.lookingFor,
+                    "requiredSkills" to projectCard.requiredSkills,
+                    "technologies" to projectCard.technologies
+                )
+
+                // Список полей для обновления
+                val fieldsToUpdate = listOf(
+                    "name",
+                    "shortDescription",
+                    "longDescription",
+                    "lookingFor",
+                    "requiredSkills",
+                    "technologies"
+                )
+
+                // Обновляем только изменяемые поля
+                documentRef.set(updatedFields, SetOptions.mergeFields(fieldsToUpdate)).await()
+                Result.success("Project updated successfully")
+            } else {
+                Result.failure(Exception("Project not found"))
+            }
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
     }
 
 

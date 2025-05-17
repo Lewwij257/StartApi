@@ -51,6 +51,7 @@ class FirebaseRegistrationRepository @Inject constructor(
         }
     }
 
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override suspend fun signIn(emailOrUsername: String, password: String): Result<String> {
         return try {
             val emailSearchResult = dataBase.collection("Users")
@@ -81,7 +82,7 @@ class FirebaseRegistrationRepository @Inject constructor(
                     Result.success("Успех!")
                 }
             }
-            Result.failure(Exception("Что-то пошло не так!"))
+            Result.failure(Exception("Не удалось найти аккаунт!"))
         }
         catch (e: Exception){
             Result.failure(Exception("Ошибка: ${e.message}"))

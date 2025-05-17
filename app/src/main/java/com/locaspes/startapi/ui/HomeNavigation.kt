@@ -87,7 +87,9 @@ fun HomeNavigation(
                     navController.getBackStackEntry(Screen.Projects.route)
                 }
                 val viewModel: ProjectsViewModel = hiltViewModel(projectsBackStackEntry)
-                ProjectEditScreen(viewModel = viewModel)
+                ProjectEditScreen(
+                    viewModel = viewModel,
+                    onCloseEditProjectScreen = {navController.navigate(Screen.Projects.route)})
             }
 
             composable(Screen.Messenger.route) {

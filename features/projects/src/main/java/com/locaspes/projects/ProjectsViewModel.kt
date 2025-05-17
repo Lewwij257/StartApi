@@ -31,6 +31,25 @@ class ProjectsViewModel @Inject constructor(
 
     }
 
+    fun saveEditedProject(){
+        viewModelScope.launch {
+            val saveEditProjectResult = projectsUseCase.saveEditedProject(
+                ProjectCard(
+                    id = uiState.value.editProjectId,
+                    name = uiState.value.editProjectTitle,
+                    shortDescription = uiState.value.editProjectShortDescription,
+                    longDescription = uiState.value.editProjectLongDescription,
+                    lookingFor = uiState.value.editProjectLookingFor.split(", ", " "),
+                    requiredSkills = uiState.value.editProjectRequiredSkills.split(", ", " "),
+                    technologies = uiState.value.editProjectTechnologies.split(", ", " ")
+                )
+            )
+            if (saveEditProjectResult.isSuccess){
+                _uiState.update { it.copy() }
+            }
+        }
+    }
+
 
     fun loadUserRelatedProjects() {
         viewModelScope.launch {
