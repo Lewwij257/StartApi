@@ -95,26 +95,26 @@ fun SignUp(
             )
         )
 
-        uiState.validationErrors.forEach { error ->
-            when (error) {
-                AuthValidationError.EmptyUsername -> Text(
-                    text = "Имя пользователя не может быть пустым",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(start = 20.dp)
-                )
-                AuthValidationError.ShortUsername -> Text(
-                    text = "Имя пользователя должно быть длиннее 3 символов",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(start = 20.dp)
-                )
-                AuthValidationError.LongUsername -> Text(
-                    text = "Дружище, полегче, очень длинно",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(start = 20.dp)
-                )
-                else -> Unit
-            }
-        }
+//        uiState.validationErrors.forEach { error ->
+//            when (error) {
+//                AuthValidationError.EmptyUsername -> Text(
+//                    text = "Имя пользователя не может быть пустым",
+//                    color = MaterialTheme.colorScheme.error,
+//                    modifier = Modifier.padding(start = 20.dp)
+//                )
+//                AuthValidationError.ShortUsername -> Text(
+//                    text = "Имя пользователя должно быть длиннее 3 символов",
+//                    color = MaterialTheme.colorScheme.error,
+//                    modifier = Modifier.padding(start = 20.dp)
+//                )
+//                AuthValidationError.LongUsername -> Text(
+//                    text = "Дружище, полегче, очень длинно",
+//                    color = MaterialTheme.colorScheme.error,
+//                    modifier = Modifier.padding(start = 20.dp)
+//                )
+//                else -> Unit
+//            }
+//        }
 
         Text(
             text = "Email",
@@ -153,21 +153,21 @@ fun SignUp(
             )
         )
 
-        uiState.validationErrors.forEach { error ->
-            when (error) {
-                AuthValidationError.EmptyEmail -> Text(
-                    text = "Email не может быть пустым",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(start = 20.dp)
-                )
-                AuthValidationError.InvalidEmail -> Text(
-                    text = "Некорректный формат email",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(start = 20.dp)
-                )
-                else -> Unit
-            }
-        }
+//        uiState.validationErrors.forEach { error ->
+//            when (error) {
+//                AuthValidationError.EmptyEmail -> Text(
+//                    text = "Email не может быть пустым",
+//                    color = MaterialTheme.colorScheme.error,
+//                    modifier = Modifier.padding(start = 20.dp)
+//                )
+//                AuthValidationError.InvalidEmail -> Text(
+//                    text = "Некорректный формат email",
+//                    color = MaterialTheme.colorScheme.error,
+//                    modifier = Modifier.padding(start = 20.dp)
+//                )
+//                else -> Unit
+//            }
+//        }
 
         Text(
             text = "Пароль",
@@ -202,50 +202,59 @@ fun SignUp(
             visualTransformation = PasswordVisualTransformation()
         )
 
-        uiState.validationErrors.forEach { error ->
-            when (error) {
-                AuthValidationError.EmptyPassword -> Text(
-                    text = "Пароль не должен быть пустым",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(start = 20.dp)
-                )
-                AuthValidationError.ShortPassword -> Text(
-                    text = "Пароль должен быть длиннее 5 символов",
-                    color = MaterialTheme.colorScheme.error,
-                    modifier = Modifier.padding(start = 20.dp)
-                )
-                else -> Unit
-            }
-        }
+//        uiState.validationErrors.forEach { error ->
+//            when (error) {
+//                AuthValidationError.EmptyPassword -> Text(
+//                    text = "Пароль не должен быть пустым",
+//                    color = MaterialTheme.colorScheme.error,
+//                    modifier = Modifier.padding(start = 20.dp)
+//                )
+//                AuthValidationError.ShortPassword -> Text(
+//                    text = "Пароль должен быть длиннее 5 символов",
+//                    color = MaterialTheme.colorScheme.error,
+//                    modifier = Modifier.padding(start = 20.dp)
+//                )
+//                else -> Unit
+//            }
+//        }
 
-        if (uiState is SignUpUiState.Loading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
-        }
+//        if (uiState is SignUpUiState.Loading) {
+//            CircularProgressIndicator(modifier = Modifier.align(Alignment.CenterHorizontally))
+//        }
+//
+//        if (uiState is SignUpUiState.Error && (uiState as SignUpUiState.Error).message.isNotEmpty()) {
+//            Text(
+//                text = (uiState as SignUpUiState.Error).message,
+//                color = MaterialTheme.colorScheme.error,
+//                modifier = Modifier.padding(horizontal = 16.dp)
+//            )
+//        }
 
-        if (uiState is SignUpUiState.Error && (uiState as SignUpUiState.Error).message.isNotEmpty()) {
-            Text(
-                text = (uiState as SignUpUiState.Error).message,
-                color = MaterialTheme.colorScheme.error,
-                modifier = Modifier.padding(horizontal = 16.dp)
-            )
-        }
+//        if (uiState is SignUpUiState.Success){
+//            LaunchedEffect(Unit){
+//                onRegisterSuccess()
+//            }
+//        }
 
-        if (uiState is SignUpUiState.Success){
-            LaunchedEffect(Unit){
-                onRegisterSuccess()
-            }
-        }
 
         Button(
             onClick = viewModel::signUp,
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 36.dp)
                 .fillMaxWidth(),
-            enabled = uiState !is SignUpUiState.Loading
+            enabled = !uiState.isLoading
         ) {
-            Text(
-                "Продолжить", fontSize = 20.sp
-            )
+            if (uiState.isLoading){
+                Text(
+                    "Загрузка"
+                )
+            }
+            else{
+                Text(
+                    "Продолжить", fontSize = 20.sp
+                )
+            }
+
         }
 
         Spacer(modifier = Modifier.weight(1f))
