@@ -18,4 +18,18 @@ class UserDataRepository @Inject constructor(private val userDataStore: UserData
         return userDataStore.userProfile
     }
 
+    /**
+     * set if app opened for the first time state
+     */
+    suspend fun setFirstOpenState(state: Boolean){
+        userDataStore.editFirstOpenState(state)
+    }
+
+    /**
+     * returns if app opened for the first time
+     */
+    fun getFirstOpenState(): Flow<Boolean?>{
+        return userDataStore.firstOpenState
+    }
+
 }

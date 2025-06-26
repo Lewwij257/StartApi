@@ -3,10 +3,12 @@ package com.locaspes.startapi
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresExtension
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -23,15 +25,13 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity: ComponentActivity() {
+    @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             StellarisAppTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    App(
-                        modifier = Modifier.padding(innerPadding))
-                }
+                App()
             }
         }
     }
@@ -46,17 +46,17 @@ class MainActivity: ComponentActivity() {
 
 }
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    StellarisAppTheme {
-        Welcome({})
-    }
-}
-@Preview(showBackground = true)
-@Composable
-fun GreetingDarkPreview() {
-    StellarisAppTheme(darkTheme = false) {
-        Welcome({})
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun GreetingPreview() {
+//    StellarisAppTheme {
+//        Welcome({})
+//    }
+//}
+//@Preview(showBackground = true)
+//@Composable
+//fun GreetingDarkPreview() {
+//    StellarisAppTheme(darkTheme = false) {
+//        Welcome({})
+//    }
+//}

@@ -11,8 +11,7 @@ import dagger.hilt.components.SingletonComponent
 object FirebaseRegistrationModule {
     @Provides
     fun provideFirebaseRegistrationRepository(
-        userDataRepository: UserDataRepository
-    ): FirebaseRegistrationRepository {
+        userDataRepository: UserDataRepository): FirebaseRegistrationRepository {
         return FirebaseRegistrationRepository(userDataRepository)
     }
 }

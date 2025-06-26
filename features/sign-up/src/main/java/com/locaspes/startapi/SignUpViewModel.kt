@@ -18,66 +18,68 @@ import javax.inject.Inject
 open class SignUpViewModel @Inject constructor(
     private val signUpUseCase: SignUpUseCase): ViewModel() {
 
-    private val _uiState = MutableStateFlow<SignUpUiState>(SignUpUiState.Idle())
+    private val _uiState = MutableStateFlow<SignUpUiState>(SignUpUiState())
     val uiState: StateFlow<SignUpUiState> = _uiState.asStateFlow()
 
 
-
     fun updateEmail(email: String) {
-        _uiState.update { state ->
-            when (state) {
-                is SignUpUiState.Idle -> state.copy(email = email, validationErrors = emptyList())
-                is SignUpUiState.Error -> SignUpUiState.Idle(
-                    email = email,
-                    username = state.username,
-                    password = state.password,
-                    validationErrors = emptyList(),
-                    message = ""
-                )
-
-                is SignUpUiState.Loading -> state
-                is SignUpUiState.Success -> state
-            }
-        }
+        _uiState.update { it.copy(email = email) }
+//        _uiState.update { state ->
+//            when (state) {
+//                is SignUpUiState.Idle -> state.copy(email = email, validationErrors = emptyList())
+//                is SignUpUiState.Error -> SignUpUiState.Idle(
+//                    email = email,
+//                    username = state.username,
+//                    password = state.password,
+//                    validationErrors = emptyList(),
+//                    message = ""
+//                )
+//
+//                is SignUpUiState.Loading -> state
+//                is SignUpUiState.Success -> state
+//            }
+//        }
     }
 
     fun updateUsername(username: String) {
-        _uiState.update { state ->
-            when (state) {
-                is SignUpUiState.Idle -> state.copy(username = username, validationErrors = emptyList())
-
-                is SignUpUiState.Error -> SignUpUiState.Idle(
-                    email = state.email,
-                    username = username,
-                    password = state.password,
-                    validationErrors = emptyList(),
-                    message = ""
-                )
-
-                is SignUpUiState.Loading -> state
-                is SignUpUiState.Success -> state
-            }
-        }
+        _uiState.update { it.copy(username = username) }
+//        _uiState.update { state ->
+//            when (state) {
+//                is SignUpUiState.Idle -> state.copy(username = username, validationErrors = emptyList())
+//
+//                is SignUpUiState.Error -> SignUpUiState.Idle(
+//                    email = state.email,
+//                    username = username,
+//                    password = state.password,
+//                    validationErrors = emptyList(),
+//                    message = ""
+//                )
+//
+//                is SignUpUiState.Loading -> state
+//                is SignUpUiState.Success -> state
+//            }
+//        }
     }
 
     fun updatePassword(password: String) {
-        _uiState.update { state ->
-            when (state) {
-                is SignUpUiState.Idle -> state.copy(
-                    password = password,
-                    validationErrors = emptyList()
-                )
-                is SignUpUiState.Error -> SignUpUiState.Idle(
-                    email = state.email,
-                    username = state.username,
-                    password = password,
-                    validationErrors = emptyList(),
-                    message = ""
-                )
-                is SignUpUiState.Loading -> state
-                is SignUpUiState.Success -> state
-            }
-        }
+        _uiState.update { it.copy(password = password) }
+//        _uiState.update { state ->
+//            when (state) {
+//                is SignUpUiState.Idle -> state.copy(
+//                    password = password,
+//                    validationErrors = emptyList()
+//                )
+//                is SignUpUiState.Error -> SignUpUiState.Idle(
+//                    email = state.email,
+//                    username = state.username,
+//                    password = password,
+//                    validationErrors = emptyList(),
+//                    message = ""
+//                )
+//                is SignUpUiState.Loading -> state
+//                is SignUpUiState.Success -> state
+//            }
+//        }
     }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
@@ -91,11 +93,12 @@ open class SignUpViewModel @Inject constructor(
             )
 
             _uiState.update {
-                SignUpUiState.Loading(
-                    email = email,
-                    username = username,
-                    password = password
-                )
+                it.copy(isLoading = true)
+//                SignUpUiState.Loading(
+//                    email = email,
+//                    username = username,
+//                    password = password
+//                )
             }
 
             val result = signUpUseCase.signUp(
@@ -105,43 +108,41 @@ open class SignUpViewModel @Inject constructor(
                     password = password
                 )
             )
-
-            _uiState.update {
-                when (result) {
-                    is AuthResult.Success -> SignUpUiState.Success(result.userId)
-                    is AuthResult.ValidationFailure -> SignUpUiState.Error(
-                        email = email,
-                        username = username,
-                        password = password,
-                        message = "Пожалуйста, исправьте ошибки в полях",
-                        validationErrors = result.validationResult.errors
-                    )
-
-                    is AuthResult.NetworkError -> SignUpUiState.Error(
-                        email = email,
-                        username = username,
-                        password = password,
-                        message = result.message,
-                        validationErrors = emptyList()
-                    )
-
-                    is AuthResult.AuthenticationError -> SignUpUiState.Error(
-                        email = email,
-                        username = username,
-                        password = password,
-                        message = result.message,
-                        validationErrors = emptyList()
-                    )
-
-                    is AuthResult.UnknownError -> SignUpUiState.Error(
-                        email = email,
-                        username = username,
-                        password = password,
-                        message = result.message,
-                        validationErrors = emptyList()
-                    )
-                }
-            }
+//
+//            _uiState.update {
+//                when (result) {
+//                    is AuthResult.Success -> SignUpUiState.Success(result.userId)
+//                    is AuthResult.ValidationFailure -> SignUpUiState.Error(
+//                        email = email,
+//                        username = username,
+//                        password = password,
+//                        message = "Пожалуйста, исправьте ошибки в полях",
+//                        validationErrors = result.validationResult.errors
+//                    )
+//
+//                    is AuthResult.NetworkError -> SignUpUiState.Error(
+//                        email = email,
+//                        username = username,
+//                        password = password,
+//                        message = result.message,
+//                        validationErrors = emptyList()
+//                    )
+//
+//                    is AuthResult.AuthenticationError -> SignUpUiState.Error(
+//                        email = email,
+//                        username = username,
+//                        password = password,
+//                        message = result.message,
+//                        validationErrors = emptyList()
+//                    )
+//
+//                    is AuthResult.UnknownError -> SignUpUiState.Error(
+//                        email = email,
+//                        username = username,
+//                        password = password,
+//                        message = result.message,
+//                        validationErrors = emptyList()
+//                    )
         }
     }
 }

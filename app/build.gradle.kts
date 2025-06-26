@@ -74,7 +74,7 @@ dependencies {
     implementation(project(":features:sign-in"))
     implementation(project(":features:sign-up"))
     implementation(project(":features:welcome"))
-    implementation(project(":navigation"))
+    //implementation(project(":navigation"))
     implementation(project(":core"))
 
     implementation(libs.javapoet)

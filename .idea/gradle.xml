@@ -22,7 +22,6 @@
             <option value="$PROJECT_DIR$/features/sign-in" />
             <option value="$PROJECT_DIR$/features/sign-up" />
             <option value="$PROJECT_DIR$/features/welcome" />
-            <option value="$PROJECT_DIR$/navigation" />
             <option value="$PROJECT_DIR$/theme" />
           </set>
         </option>

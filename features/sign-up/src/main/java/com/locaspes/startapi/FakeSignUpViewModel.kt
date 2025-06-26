@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
 class FakeSignUpViewModel: ViewModel() {
-    private val _uiState = MutableStateFlow<SignUpUiState>(SignUpUiState.Idle())
+    private val _uiState = MutableStateFlow(SignUpUiState())
     val uiState: StateFlow<SignUpUiState> = _uiState.asStateFlow()
 
     fun signUp() {

@@ -9,7 +9,6 @@ object CloudinaryConfig {
 
     fun initialize(context: Context) {
         if (!isInitialized) {
-            // Чтение файла Secretiki
             val properties = Properties()
             try {
                 context.assets.open("Secretiki").use { inputStream ->

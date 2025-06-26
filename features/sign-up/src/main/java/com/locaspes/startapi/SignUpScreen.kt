@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -19,7 +18,6 @@ import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -30,14 +28,13 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.locaspes.stellaristheme.AppTypography
-import com.locaspes.utils.AuthValidationError
 
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
 fun SignUp(
     viewModel: SignUpViewModel,
-    onRegisterSuccess: () -> Unit,
-    onLogInButtonClicked: () -> Unit) {
+    onSignUpButtonClickNavigation: () -> Unit,
+    onSignInButtonClickNavigation: () -> Unit) {
 
     val uiState by viewModel.uiState.collectAsState()
 
@@ -236,25 +233,16 @@ fun SignUp(
 //            }
 //        }
 
-
-        Button(
-            onClick = viewModel::signUp,
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 36.dp)
-                .fillMaxWidth(),
-            enabled = !uiState.isLoading
-        ) {
-            if (uiState.isLoading){
-                Text(
-                    "Загрузка"
-                )
-            }
-            else{
-                Text(
-                    "Продолжить", fontSize = 20.sp
-                )
-            }
-
+        if (uiState.isLoading){
+            CircularProgressIndicator()
+        }
+        else{
+            StartApiButton(
+                onClick = viewModel::signUp,
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 36.dp)
+                    .fillMaxWidth(),
+                text = "Продолжить")
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -272,7 +260,7 @@ fun SignUp(
                 fontSize = 16.sp
             )
             TextButton(
-                onClick = onLogInButtonClicked,
+                onClick = onSignInButtonClickNavigation,
             ) {
                 Text(
                     "Войти"
@@ -281,3 +269,12 @@ fun SignUp(
         }
     }
 }
+
+//@RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
+//@Composable
+//@Preview
+//fun SignUpScreenPreview(){
+//    StellarisAppTheme {
+//        SignUp(viewModel = FakeSignUpViewModel(), onRegisterSuccess = {}, onLogInButtonClicked = {})
+//    }
+//}

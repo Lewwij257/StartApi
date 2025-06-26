@@ -16,9 +16,22 @@ class AppViewModel @Inject constructor(private val userDataRepository: UserDataR
 
     init {
         viewModelScope.launch {
-            userDataRepository.getUserProfile().collectLatest { userId ->
-                _isUserLoggedIn.value = userId != null
+            userDataRepository.getUserProfile().collectLatest { userProfile ->
+                _isUserLoggedIn.value = userProfile != null
             }
+        }
+    }
+
+    fun setFirstOpenState(state: Boolean) {
+        viewModelScope.launch {
+            userDataRepository.setFirstOpenState(state)
+        }
+    }
+
+    fun logOut(){
+        viewModelScope.launch {
+            userDataRepository.clearUserProfile()
+            _isUserLoggedIn.value = false
         }
     }
 

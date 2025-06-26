@@ -2,6 +2,7 @@ package com.locaspes.data
 
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.preferencesOf
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -16,7 +17,12 @@ class UserDataStore @Inject constructor(
 ) {
     companion object{
         private val USER_PROFILE_KEY = stringPreferencesKey("user")
+        private val FIRST_OPEN_STATE_KEY = booleanPreferencesKey("firstOpenState")
         val gson = Gson()
+    }
+
+    val firstOpenState: Flow<Boolean> = dataStore.data.map { preferences ->
+        preferences[FIRST_OPEN_STATE_KEY]?: false
     }
 
     val userProfile: Flow<UserProfile?> = dataStore.data.map {preferences ->
@@ -34,6 +40,12 @@ class UserDataStore @Inject constructor(
     suspend fun clearUserProfile(){
         dataStore.edit { preferences ->
             preferences.remove(USER_PROFILE_KEY)
+        }
+    }
+
+    suspend fun editFirstOpenState(state: Boolean){
+        dataStore.edit { preferences ->
+            preferences[FIRST_OPEN_STATE_KEY] = state
         }
     }
 
