@@ -24,66 +24,21 @@ open class SignUpViewModel @Inject constructor(
 
     fun updateEmail(email: String) {
         _uiState.update { it.copy(email = email) }
-//        _uiState.update { state ->
-//            when (state) {
-//                is SignUpUiState.Idle -> state.copy(email = email, validationErrors = emptyList())
-//                is SignUpUiState.Error -> SignUpUiState.Idle(
-//                    email = email,
-//                    username = state.username,
-//                    password = state.password,
-//                    validationErrors = emptyList(),
-//                    message = ""
-//                )
-//
-//                is SignUpUiState.Loading -> state
-//                is SignUpUiState.Success -> state
-//            }
-//        }
     }
 
     fun updateUsername(username: String) {
         _uiState.update { it.copy(username = username) }
-//        _uiState.update { state ->
-//            when (state) {
-//                is SignUpUiState.Idle -> state.copy(username = username, validationErrors = emptyList())
-//
-//                is SignUpUiState.Error -> SignUpUiState.Idle(
-//                    email = state.email,
-//                    username = username,
-//                    password = state.password,
-//                    validationErrors = emptyList(),
-//                    message = ""
-//                )
-//
-//                is SignUpUiState.Loading -> state
-//                is SignUpUiState.Success -> state
-//            }
-//        }
     }
 
     fun updatePassword(password: String) {
         _uiState.update { it.copy(password = password) }
-//        _uiState.update { state ->
-//            when (state) {
-//                is SignUpUiState.Idle -> state.copy(
-//                    password = password,
-//                    validationErrors = emptyList()
-//                )
-//                is SignUpUiState.Error -> SignUpUiState.Idle(
-//                    email = state.email,
-//                    username = state.username,
-//                    password = password,
-//                    validationErrors = emptyList(),
-//                    message = ""
-//                )
-//                is SignUpUiState.Loading -> state
-//                is SignUpUiState.Success -> state
-//            }
-//        }
     }
 
     @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
     fun signUp() {
+        _uiState.update {
+            it.copy(isLoading = true, errorMessage = "")
+        }
         viewModelScope.launch {
             val currentState = _uiState.value
             val (email, username, password) = Triple(
@@ -91,16 +46,6 @@ open class SignUpViewModel @Inject constructor(
                 currentState.username,
                 currentState.password
             )
-
-            _uiState.update {
-                it.copy(isLoading = true)
-//                SignUpUiState.Loading(
-//                    email = email,
-//                    username = username,
-//                    password = password
-//                )
-            }
-
             val result = signUpUseCase.signUp(
                 UserProfile(
                     email = email,
@@ -108,6 +53,19 @@ open class SignUpViewModel @Inject constructor(
                     password = password
                 )
             )
+
+            when (result){
+                is AuthResult.Success -> _uiState.update { it.copy(isLoading = false, errorMessage = "") }
+                is AuthResult.AuthentificationError -> _uiState.update { it.copy(isLoading = false, errorMessage = "Неверные данные входа") }
+                is AuthResult.NetworkError -> _uiState.update { it.copy(isLoading = false, errorMessage = "Ошибка сети") }
+                is AuthResult.UnknownError -> _uiState.update { it.copy(isLoading = false, errorMessage = "Неизвестная ошибка. Она уже отправлена на сервер, скоро всё починим!") }
+                is AuthResult.ValidationFailure ->
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = result.validationResult.errors.first().toReadable()) }
+            }
+
 //
 //            _uiState.update {
 //                when (result) {

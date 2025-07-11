@@ -14,5 +14,8 @@ data class ProjectCard(
     var author: String = "",
     var createDate: Timestamp = Timestamp.now(),
     val usersApplied: List<String> = emptyList(),
-    val usersAccepted: List<String> = emptyList()
+    val usersAccepted: List<String> = emptyList(),
+
+    //new
+    val projectType:
 )

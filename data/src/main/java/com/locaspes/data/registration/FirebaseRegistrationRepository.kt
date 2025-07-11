@@ -2,13 +2,10 @@ package com.locaspes.data.registration
 
 import android.net.http.NetworkException
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresExtension
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.rpc.context.AttributeContext.Auth
 import com.locaspes.data.UserDataRepository
-import com.locaspes.data.UserDataStore
 import com.locaspes.data.model.AuthResult
 import com.locaspes.data.model.UserProfile
 import kotlinx.coroutines.tasks.await
@@ -28,14 +25,14 @@ class FirebaseRegistrationRepository @Inject constructor(
                 .get()
                 .await()
             if (!uniqueEmailQuery.isEmpty){
-                AuthResult.AuthenticationError("Email уже занят!")
+                AuthResult.AuthentificationError("Email уже занят!")
             }
             val uniqueUsernameQuery = dataBase.collection("Users")
                 .whereEqualTo("password", userProfile.password)
                 .get()
                 .await()
             if (!uniqueUsernameQuery.isEmpty){
-                AuthResult.AuthenticationError("Имя пользователя уже занято!")
+                AuthResult.AuthentificationError("Имя пользователя уже занято!")
             }
             val document = dataBase.collection("Users").add(userProfile).await()
             document.update("id", document.id)

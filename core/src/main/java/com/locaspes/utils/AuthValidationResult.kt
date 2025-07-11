@@ -14,5 +14,18 @@ sealed class AuthValidationError{
     data object ShortPassword : AuthValidationError()
     data object EmptyPassword : AuthValidationError()
     data object EmptyEmailOrUsername : AuthValidationError()
+
+    fun toReadable(): String {
+        return when (this) {
+            is EmptyEmail -> "Пустое поле email"
+            EmptyEmailOrUsername -> "Пустое поле email/имени пользователя"
+            EmptyPassword -> "Пустое поле пароля"
+            EmptyUsername -> "Пустое поле имени пользователя"
+            InvalidEmail -> "Кажется, почта не действительна"
+            LongUsername -> "Дружище, имя попроще (покороче)"
+            ShortPassword -> "Слишком легкий пароль"
+            ShortUsername -> "Маловат никнейм будет"
+        }
+    }
 }
 

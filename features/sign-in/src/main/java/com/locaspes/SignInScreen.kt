@@ -26,17 +26,21 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.locaspes.startapi.StartApiButton
 import com.locaspes.startapi.StartApiTextField
+import com.locaspes.stellaristheme.StellarisAppTheme
 
 
 @Composable
 fun SignIn(
     onSignUpButtonClickNavigation: () -> Unit,
     onSignInButtonClickNavigation: () -> Unit,
-    viewModel: SignInViewModel) {
+    viewModel: SignInViewModel)
+    //viewModel: FakeSignInViewModel)
+    {
 
     val uiState by viewModel.uiState.collectAsState()
 
@@ -124,6 +128,13 @@ fun SignIn(
                     text = "Продолжить",
                 )
             }
+            Spacer(modifier = Modifier.height(24.dp))
+            if (uiState.errorMessage.isNotEmpty()){
+                Text(
+                    text = uiState.errorMessage,
+                    color = MaterialTheme.colorScheme.error
+                )
+            }
 
 
         }
@@ -142,3 +153,16 @@ fun SignIn(
         }
     }
 }
+
+//@Preview
+//@Composable
+//
+//fun SignInPreview(){
+//    StellarisAppTheme {
+//        SignIn(
+//            {},
+//            {},
+//            FakeSignInViewModel()
+//        )
+//    }
+//}

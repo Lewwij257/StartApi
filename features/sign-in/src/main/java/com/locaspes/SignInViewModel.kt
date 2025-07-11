@@ -18,6 +18,14 @@ class SignInViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(SignInUiState())
     val uiState: StateFlow<SignInUiState> = _uiState.asStateFlow()
 
+    fun updatePassword(password: String){
+        _uiState.update { it.copy(password = password) }
+    }
+
+    fun updateEmailOrUsername(emailOrUsername: String){
+        _uiState.update { it.copy(emailOrUsername = emailOrUsername) }
+    }
+
     fun signIn(){
         viewModelScope.launch {
             _uiState.update { it.copy(isLoading = true, errorMessage = "") }
@@ -34,12 +42,6 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    fun updatePassword(password: String){
-        _uiState.update { it.copy(password = password) }
-    }
 
-    fun updateEmailOrUsername(emailOrUsername: String){
-        _uiState.update { it.copy(emailOrUsername = emailOrUsername) }
-    }
 
 }
