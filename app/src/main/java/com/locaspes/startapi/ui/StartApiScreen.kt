@@ -1,6 +1,7 @@
 package com.locaspes.startapi.ui
 
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.annotation.RequiresExtension
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
@@ -27,17 +28,25 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
+import com.example.chat.ChatScreen
+import com.example.chat.ChatViewModel
+import com.example.project_edit.ProjectEditScreen
+import com.example.project_edit.ProjectEditViewModel
+import com.google.gson.Gson
 import com.locaspes.SignIn
 import com.locaspes.SignInViewModel
 import com.locaspes.messenger.MessengerScreen
 import com.locaspes.messenger.MessengerViewModel
-import com.locaspes.projects.ProjectEditScreen
+import com.locaspes.model.ProjectCard
 import com.locaspes.projects.ProjectsScreen
 import com.locaspes.projects.ProjectsViewModel
 import com.locaspes.settings.SettingsScreen
@@ -50,7 +59,11 @@ import com.locaspes.stellaristheme.StellarisAppTheme
 import com.locaspes.ui.FeedScreen
 import com.locaspes.ui.FeedViewModel
 import com.locaspes.welcome.Welcome
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 @OptIn(ExperimentalMaterial3Api::class)
 @RequiresExtension(extension = Build.VERSION_CODES.S, version = 7)
 @Composable
@@ -158,32 +171,61 @@ fun App() {
 
                 composable(Screen.Feed.route) {
                     val feedViewModel: FeedViewModel = hiltViewModel()
-                    FeedScreen(viewModel = feedViewModel)
+                    FeedScreen(feedViewModel)
                 }
 
                 composable(Screen.Projects.route) {
                     val projectsViewModel: ProjectsViewModel = hiltViewModel()
                     ProjectsScreen(
                         viewModel = projectsViewModel,
-                        onOpenCreatedProjectScreen = {
-                            navController.navigate(Screen.ProjectEdit.route)
+                        onOpenCreatedProjectScreen = { project ->
+                            val projectJson = Gson().toJson(project)
+                            val encodedProjectJson = URLEncoder.encode(projectJson,
+                                StandardCharsets.UTF_8.toString())
+                            navController.navigate(Screen.ProjectEdit.route.replace("{projectJson}", encodedProjectJson))
                         }
                     )
                 }
 
-                composable(Screen.ProjectEdit.route){
-                    val projectsViewModel: ProjectsViewModel = hiltViewModel()
+                composable(Screen.ProjectEdit.route, arguments = listOf(
+                    navArgument("projectJson"){type = NavType.StringType}
+                )){
+                    navBackStackEntry ->
+                    val projectsViewModel: ProjectEditViewModel = hiltViewModel()
+                    val encodedProjectJson = navBackStackEntry.arguments?.getString("projectJson")?: ""
+                    val projectJson = URLDecoder.decode(encodedProjectJson, StandardCharsets.UTF_8.toString())
+                    val project = Gson().fromJson(projectJson, ProjectCard::class.java)
                     ProjectEditScreen(
                         viewModel = projectsViewModel,
+                        projectToEdit = project,
                         onCloseEditProjectScreen = {
-                            navController.navigate(Screen.Projects.route)
+                            navController.popBackStack()
                         }
                     )
                 }
 
                 composable(Screen.Messenger.route) {
                     val messengerViewModel: MessengerViewModel = hiltViewModel()
-                    MessengerScreen(viewModel = messengerViewModel)
+                    MessengerScreen(
+                        viewModel = messengerViewModel,
+                        onOpenChat = {
+                            chatId ->
+                            navController.navigate(Screen.Chat.route.replace("{chatId}", chatId))
+                        })
+                }
+
+                composable(Screen.Chat.route, arguments = listOf(
+                    navArgument("chatId"){type = NavType.StringType}
+                )){
+                    navBackStackEntry ->
+                    val chatViewModel: ChatViewModel = hiltViewModel()
+                    val chatId = navBackStackEntry.arguments?.getString("chatId")?: ""
+                    ChatScreen(
+                        chatViewModel,
+                        chatId,
+                        onCloseChatScreen = {
+                            navController.popBackStack()
+                        })
                 }
 
                 composable(Screen.Settings.route) {

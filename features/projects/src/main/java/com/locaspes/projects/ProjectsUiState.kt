@@ -1,7 +1,8 @@
 package com.locaspes.projects
 
-import com.locaspes.data.model.ProjectCard
-import com.locaspes.data.model.UserProfile
+import com.locaspes.model.ProjectCard
+import com.locaspes.model.ProjectIcon
+import com.locaspes.model.UserProfile
 
 data class ProjectsUiState(
     val userRelatedProjects: List<List<ProjectCard>> = emptyList(),
@@ -10,6 +11,8 @@ data class ProjectsUiState(
     val selectedProject: ProjectCard = ProjectCard(),
 
     val canApply: Boolean? = null,
+
+    val createProjectIcon: ProjectIcon = ProjectIcon.Default,
     val createProjectTitle: String = "",
     val createProjectShortDescription: String = "",
     val createProjectLongDescription: String = "",

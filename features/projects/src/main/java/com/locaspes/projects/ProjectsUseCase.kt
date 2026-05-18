@@ -2,11 +2,10 @@ package com.locaspes.projects
 
 import com.locaspes.data.UserDataRepository
 import com.locaspes.data.feed.FirebaseFeedRepository
-import com.locaspes.data.model.ProjectCard
-import com.locaspes.data.model.UserProfile
+import com.locaspes.model.ProjectCard
+import com.locaspes.model.UserProfile
 import com.locaspes.data.user.FirebaseUserActionsRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 
 class ProjectsUseCase @Inject constructor(

@@ -1,6 +1,6 @@
 package com.locaspes.settings
 
-class FakeSettingsViewModel() {
+class FakeSettingsViewModel(): ISettingsVieModel {
     fun logOut(){
 
     }

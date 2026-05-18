@@ -124,6 +124,27 @@ fun SignUp(
                 )
             }
 
+            Row(
+            modifier = Modifier
+                .padding(20.dp)
+                .align(alignment = Alignment.CenterHorizontally)
+        )
+        {
+            Text(
+                modifier = Modifier.align(alignment = Alignment.CenterVertically),
+                text = "Уже есть аккаунт? ",
+                color = MaterialTheme.colorScheme.onBackground,
+                fontSize = 16.sp
+            )
+            TextButton(
+                onClick = onSignInButtonClickNavigation,
+            ) {
+                Text(
+                    "Войти"
+                )
+            }
+        }
+
             Spacer(modifier = Modifier.height(24.dp))
             if (uiState.errorMessage.isNotEmpty()){
                 Text(

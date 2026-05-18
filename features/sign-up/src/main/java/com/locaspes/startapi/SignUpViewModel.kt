@@ -4,8 +4,8 @@ import android.os.Build
 import androidx.annotation.RequiresExtension
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.locaspes.data.model.AuthResult
-import com.locaspes.data.model.UserProfile
+import com.locaspes.model.AuthResult
+import com.locaspes.model.UserProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -1,23 +1,38 @@
 package com.locaspes.projects
 
+import android.annotation.SuppressLint
+import android.widget.Space
+import androidx.compose.animation.SplineBasedFloatDecayAnimationSpec
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.FloatAnimationSpec
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.snapping.SnapPosition
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PagerDefaults
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.BasicAlertDialog
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,8 +43,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
+import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,25 +55,38 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.fontscaling.MathUtils.lerp
+import androidx.compose.ui.unit.lerp
 import androidx.compose.ui.unit.sp
-import com.locaspes.data.feed.FirebaseFeedRepository
-import com.locaspes.data.model.ProjectCard
+import coil3.Image
+import com.locaspes.ProjectIconMapper
+import com.locaspes.model.ProjectCard
+import com.locaspes.model.ProjectIcon
+import com.locaspes.startapi.StartApiTextField
+import com.locaspes.stellaristheme.StellarisAppTheme
 import com.locaspes.widgets.MainProjectCard
 import com.locaspes.widgets.StandardTextField
 import kotlinx.coroutines.launch
-import org.w3c.dom.Text
+import kotlin.math.abs
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ProjectsScreen(
-    viewModel: ProjectsViewModel,
+    viewModel: IProjectsViewModel,
     onOpenCreatedProjectScreen: (project: ProjectCard) -> Unit) {
 
     val uiState by viewModel.uiState.collectAsState()
@@ -152,6 +181,9 @@ fun ProjectsScreen(
 
                                 viewModel.getProjectRelatedUsers(project.id)
                                 viewModel.updateSelectedProject(project)
+
+
+
                                 onOpenCreatedProjectScreen(project)
                             }
                         )
@@ -194,7 +226,7 @@ fun ProjectsScreen(
                             .verticalScroll(rememberScrollState())
                     ) {
                         Text(
-                            text = "Создать новый проект",
+                            text = if (uiState.createProjectTitle.isEmpty()) "Создать новый проект" else uiState.createProjectTitle,
                             style = MaterialTheme.typography.titleLarge,
                             modifier = Modifier
                                 .padding(bottom = 24.dp)
@@ -314,67 +346,126 @@ fun MiniProjectsCategoryTitle(title: String){
         textAlign = TextAlign.Center)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@SuppressLint("SuspiciousIndentation", "RestrictedApi")
 @Composable
-fun OpenProjectCreateDialog(viewModel: ProjectsViewModel, uiState: ProjectsUiState){
-        Text(text = "Название проекта:",style = MaterialTheme.typography.titleMedium)
-        StandardTextField(
-            value = uiState.createProjectTitle,
-            onValueChange = viewModel::updateCreateProjectTitle,
-            placeholderText = "StartApi",
-            keyboardType = KeyboardType.Text
+fun OpenProjectCreateDialog(viewModel: IProjectsViewModel, uiState: ProjectsUiState){
+
+    val textFieldColors = TextFieldDefaults.colors(
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent
+    )
+    val textFieldModifier = Modifier.fillMaxWidth().padding(vertical = 10.dp)
+
+
+        Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally){
+
+            val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+            val pagerState = rememberPagerState(pageCount = { enumValues<ProjectIcon>().size })
+            val coroutineScope = rememberCoroutineScope()
+
+            LaunchedEffect(pagerState) {
+                snapshotFlow { pagerState.currentPage }.collect { page ->
+                    coroutineScope.launch {
+                        viewModel.updateSelectedIcon(enumValues<ProjectIcon>()[page])
+                    }
+                }
+            }
+
+            HorizontalPager(
+                state = pagerState,
+                pageSpacing = 16.dp,
+                contentPadding = PaddingValues(horizontal = (screenWidth - 64.dp) / 2 - 16.dp
+                ),
+                flingBehavior = PagerDefaults.flingBehavior(state = pagerState, snapAnimationSpec = tween(durationMillis = 300) ),
+                modifier = Modifier.fillMaxWidth()
+                //contentPadding = PaddingValues(horizontal = 40.dp),
+
+            ) { page ->
+                Box(
+                    modifier = Modifier
+                        .size(64.dp)
+                        .graphicsLayer {
+                            val pageOffset = (pagerState.currentPage - page) + pagerState.currentPageOffsetFraction
+                            val scale = lerp(0.8f, 1f, 1f - abs(pageOffset))
+                            scaleX = scale
+                            scaleY = scale
+                        },
+                    contentAlignment = Alignment.Center
+                ) {
+                    Image(
+                        painter = painterResource(ProjectIconMapper.getIconId(enumValues<ProjectIcon>()[page])),
+                        contentDescription = null,
+                        modifier = Modifier.size(48.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                }
+            }
+    }
+
+    Text(text = "иконка", modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
+
+
+    StartApiTextField(
+        value = uiState.createProjectTitle,
+        onValueChange = viewModel::updateCreateProjectTitle,
+        label = "Название проекта",
+        colors = textFieldColors,
+        modifier = textFieldModifier
+    )
+
+    StartApiTextField(
+        value = uiState.createProjectShortDescription,
+        onValueChange = viewModel::updateCreateProjectShortDescription,
+        label = "Короткое описание",
+        colors = textFieldColors,
+        modifier = textFieldModifier
+    )
+
+    StartApiTextField(
+        value = uiState.createProjectLongDescription,
+        onValueChange = viewModel::updateCreateProjectLongDescription,
+        label = "Длинное описание",
+        colors = textFieldColors,
+        modifier = textFieldModifier
+    )
+
+    StartApiTextField(
+        value = uiState.createProjectTechnologies,
+        onValueChange = viewModel::updateCreateProjectTechnologies,
+        label = "Используемые технологии",
+        colors = textFieldColors,
+        modifier = textFieldModifier
+    )
+
+    StartApiTextField(
+        value = uiState.createProjectRequiredSkills,
+        onValueChange = viewModel::updateCreateProjectRequiredSkills,
+        label = "Требуемые навыки",
+        colors = textFieldColors,
+        modifier = textFieldModifier
+    )
+
+    StartApiTextField(
+        value = uiState.createProjectLookingFor,
+        onValueChange = viewModel::updateCreateProjectLookingFor,
+        label = "Ищем специалистов",
+        colors = textFieldColors,
+        modifier = textFieldModifier
+    )
+
+    Button(onClick = { viewModel.createProject() }) {
+        Text(
+            text = "Создать",
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(10.dp),
+            textAlign = TextAlign.Center
         )
-    
-        Text(text = "Короткое описание:", style = MaterialTheme.typography.titleMedium)
-    
-        StandardTextField(
-            value = uiState.createProjectShortDescription,
-            onValueChange = viewModel::updateCreateProjectShortDescription,
-            placeholderText = "StartApi - app for new startapp's",
-            keyboardType = KeyboardType.Text
-        )
-    
-        Text(text = "Длинное описание:", style = MaterialTheme.typography.titleMedium)
-    
-        StandardTextField(
-            value = uiState.createProjectLongDescription,
-            onValueChange = viewModel::updateCreateProjectLongDescription,
-            placeholderText = "We developing this app to allow students to...",
-            keyboardType = KeyboardType.Text
-        )
-    
-        Text(text = "Используемые технологии:", style = MaterialTheme.typography.titleMedium)
-        StandardTextField(
-            value = uiState.createProjectTechnologies,
-            onValueChange = viewModel::updateCreateProjectTechnologies,
-            placeholderText = "Kotlin, Android, Firebase, JetpackCompose...",
-            keyboardType = KeyboardType.Text
-        )
-    
-        Text(text = "Требуемые навыки:", style = MaterialTheme.typography.titleMedium)
-        StandardTextField(
-            value = uiState.createProjectRequiredSkills,
-            onValueChange = viewModel::updateCreateProjectRequiredSkills,
-            placeholderText = "MVVM, Kotlin",
-            keyboardType = KeyboardType.Text
-        )
-    
-        Text(text = "Ищем специалистов:", style = MaterialTheme.typography.titleMedium)
-        StandardTextField(
-            value = uiState.createProjectLookingFor,
-            onValueChange = viewModel::updateCreateProjectLookingFor,
-            placeholderText = "Программист, дизайнер",
-            keyboardType = KeyboardType.Text
-        )
-    
-        Button(onClick = {viewModel.createProject()}) {
-            Text(
-                text = "Создать",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(10.dp),
-                textAlign = TextAlign.Center
-            )
-        }
+    }
 }
 
 
@@ -382,5 +473,7 @@ fun OpenProjectCreateDialog(viewModel: ProjectsViewModel, uiState: ProjectsUiSta
 @Composable
 @Preview
 fun ProjectScreenPreview(){
-    //ProjectsScreen(ProjectsViewModel(projectsUseCase = ProjectsUseCase()))
+    StellarisAppTheme {
+        ProjectsScreen(FakeProjectsViewModel(), {})
+    }
 }

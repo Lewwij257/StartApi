@@ -6,7 +6,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.locaspes.core.ImageStorageRepository
 import com.locaspes.data.UserDataRepository
-import com.locaspes.data.model.UserProfile
+import com.locaspes.model.UserProfile
 import com.locaspes.data.user.FirebaseUserActionsRepository
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.tasks.await

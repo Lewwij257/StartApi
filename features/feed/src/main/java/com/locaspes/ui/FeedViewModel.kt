@@ -3,11 +3,9 @@ package com.locaspes.ui
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.DocumentSnapshot
 import com.locaspes.FeedUseCase
 import com.locaspes.data.UserDataRepository
-import com.locaspes.data.model.ProjectCard
-import com.locaspes.data.user.FirebaseUserActionsRepository
+import com.locaspes.model.ProjectCard
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -19,18 +17,19 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, private val userDataRepository: UserDataRepository): ViewModel(){
+class FeedViewModel @Inject constructor
+    (private val feedUseCase: FeedUseCase, private val userDataRepository: UserDataRepository): ViewModel(), IFeedViewModel{
 
     private val _uiState = MutableStateFlow(FeedUiState())
-    val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
-    var userId: String = ""
+    override val uiState: StateFlow<FeedUiState> = _uiState.asStateFlow()
 
-    private var isLoading = false
+
+
 
     init {
         loadProjects()
         viewModelScope.launch {
-            userId = userDataRepository.getUserProfile().first()?.id ?: ""
+            _uiState.update { it.copy(userId = userDataRepository.getUserProfile().first()?.id ?: "") }
         }
     }
 
@@ -38,7 +37,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
         _uiState.update { it.copy(canApply = canApply) }
     }
 
-    fun unfollowProject(projectId: String) {
+    override fun unfollowProject(projectId: String) {
         viewModelScope.launch {
             try {
                 feedUseCase.unfollowProject(projectId)
@@ -46,7 +45,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
                 _uiState.update { state ->
                     val updatedProjects = state.projects.map { project ->
                         if (project.id == projectId) {
-                            project.copy(usersAccepted = project.usersAccepted - userId)
+                            project.copy(usersAccepted = project.usersAccepted - uiState.value.userId)
                         } else {
                             project
                         }
@@ -59,20 +58,18 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
         }
     }
 
-    fun updateSearch(searchText: String){
+    override fun updateSearch(searchText: String){
         _uiState.update { it.copy(search = searchText) }
     }
 
-    fun loadProjects(){
+    override fun loadProjects(){
         if (!feedUseCase.hasMoreData() || _uiState.value.isLoading) return
         viewModelScope.launch {
-            isLoading = true
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
 
             feedUseCase.loadPaginatedProjects()
                 .catch { e ->
                     _uiState.update { it.copy(errorMessage = "Ошибка загрузки: ${e.message}", isLoading = false) }
-                    isLoading=false
                 }
                 .collect { newProjects ->
                     val updatedProjects = _uiState.value.projects.toMutableList().apply{
@@ -87,12 +84,11 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
                             errorMessage = null
                         )
                     }
-                    isLoading = false
                 }
         }
     }
 
-    fun changeCanApplyState(projectId: String){
+    override fun changeCanApplyState(projectId: String){
         viewModelScope.launch {
             try{
                 _uiState.update { it.copy(
@@ -106,7 +102,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
         }
     }
 
-    fun changeAuthorState(projectCard: ProjectCard){
+    override fun changeAuthorState(projectCard: ProjectCard){
         viewModelScope.launch {
             if (projectCard.author == userDataRepository.getUserProfile().first()!!.id){
                 _uiState.update { it.copy( isAuthorState = true) }
@@ -117,7 +113,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
         }
     }
 
-    fun applyUserToProject(projectId: String){
+    override fun applyUserToProject(projectId: String){
         viewModelScope.launch {
             _uiState.update{it.copy(canApply = null)}
             feedUseCase.applyUserToProject(userDataRepository.getUserProfile().first()!!.id, projectId)
@@ -125,7 +121,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
         }
     }
 
-    fun cancelUserApplication(projectId: String){
+    override fun cancelUserApplication(projectId: String){
         viewModelScope.launch {
             _uiState.update{it.copy(canApply = null)}
             feedUseCase.cancelUserApplication(projectId)
@@ -133,7 +129,7 @@ class FeedViewModel @Inject constructor(private val feedUseCase: FeedUseCase, pr
         }
     }
 
-    fun getProjectRelatedUsers(projectId: String) {
+    override fun getProjectRelatedUsers(projectId: String) {
         viewModelScope.launch {
             val projectRelatedUsers = feedUseCase.getProjectRelatedUsers(projectId)
             if (projectRelatedUsers.isSuccess) {

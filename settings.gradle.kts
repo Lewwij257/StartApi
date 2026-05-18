@@ -34,3 +34,6 @@ include(":features:feed")
 include(":features:projects")
 include(":features:messenger")
 include(":features:settings")
+
+include(":features:project_edit")
+include(":features:chat")

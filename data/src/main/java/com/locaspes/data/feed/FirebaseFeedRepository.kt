@@ -3,10 +3,9 @@ package com.locaspes.data.feed
 import android.util.Log
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.auth.User
 import com.locaspes.data.UserDataRepository
-import com.locaspes.data.model.ProjectCard
-import com.locaspes.data.model.UserProfile
+import com.locaspes.model.ProjectCard
+import com.locaspes.model.UserProfile
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow

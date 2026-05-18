@@ -22,8 +22,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil3.compose.rememberAsyncImagePainter
-import com.locaspes.data.model.Message
+import com.locaspes.model.Message
+import com.locaspes.stellaristheme.StellarisAppTheme
 import com.locaspes.theme.R
 
 @Composable
@@ -34,8 +34,7 @@ fun MessageWidget(
 ) {
     Row(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 8.dp),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.Top,
         horizontalArrangement = if (isUserMessage) Arrangement.End else Arrangement.Start
     ) {
@@ -61,7 +60,8 @@ fun MessageWidget(
                 ) {
                     Text(
                         text = message.message,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                        color = MaterialTheme.colorScheme.onPrimaryContainer,
+                        modifier = Modifier.fillMaxWidth(0.9f)
                     )
                 }
             }
@@ -100,7 +100,8 @@ fun MessageWidget(
                 ) {
                     Text(
                         text = message.message,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.fillMaxWidth(0.9f)
                     )
                 }
             }
@@ -111,7 +112,7 @@ fun MessageWidget(
 @Composable
 @Preview
 fun PreviewMessageWidget() {
-    MaterialTheme {
+    StellarisAppTheme {
         Column(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
             MessageWidget(
                 message = Message(

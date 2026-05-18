@@ -6,14 +6,13 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.SetOptions
-import com.google.firebase.firestore.auth.User
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.locaspes.data.UserDataRepository
-import com.locaspes.data.model.ChatItem
-import com.locaspes.data.model.Message
-import com.locaspes.data.model.ProjectCard
-import com.locaspes.data.model.UserProfile
+import com.locaspes.model.ChatItem
+import com.locaspes.model.Message
+import com.locaspes.model.ProjectCard
+import com.locaspes.model.UserProfile
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -30,6 +29,7 @@ class FirebaseUserActionsRepository @Inject constructor(
     override suspend fun sendMessage(message: Message
     ): Result<String> {
         return try {
+            Log.d("FirebaseUserActionsRepository", message.toString())
             dataBase.collection("Chats")
                 .document(message.projectId)
                 .collection("Messages")
@@ -40,7 +40,7 @@ class FirebaseUserActionsRepository @Inject constructor(
 
         }
         catch (e: Exception){
-            Log.d("FirebaseUserActionsRepository", "message not sent!")
+            Log.d("FirebaseUserActionsRepository", "message not sent! exception: $e")
             Result.failure(Exception("Ошибка: ${e.message}" ))
         }
     }
@@ -108,6 +108,8 @@ class FirebaseUserActionsRepository @Inject constructor(
         }
     }
 
+
+
     override suspend fun createProject(projectCard: ProjectCard): Boolean{
         try {
             projectCard.author = userDataRepository.getUserProfile().first()!!.id
@@ -124,7 +126,7 @@ class FirebaseUserActionsRepository @Inject constructor(
             val chatItem = ChatItem(
                 projectName = projectCard.name,
                 id = newProjectDocument.id,
-                projectIconUrl = "",
+                icon = projectCard.projectIcon,
                 lastMessage = "Ещё нет сообщений",
                 lastMessageDate = Timestamp.now().toString(),
                 hasNewMessages = false
@@ -292,8 +294,11 @@ class FirebaseUserActionsRepository @Inject constructor(
 
     override suspend fun saveEditedProject(projectCard: ProjectCard): Result<String> {
         return try {
-            val documentRef = dataBase.collection("Projects").document(projectCard.id)
-            val projectCardToEdit = documentRef.get().await()
+            val projectDocumentRef = dataBase.collection("Projects").document(projectCard.id)
+            val projectCardToEdit = projectDocumentRef.get().await()
+
+            val chatDocumentRef = dataBase.collection("Chats").document(projectCard.id)
+            val chatToEdit = chatDocumentRef.get().await()
 
             if (projectCardToEdit.exists()) {
                 val updatedFields = mapOf(
@@ -302,27 +307,106 @@ class FirebaseUserActionsRepository @Inject constructor(
                     "longDescription" to projectCard.longDescription,
                     "lookingFor" to projectCard.lookingFor,
                     "requiredSkills" to projectCard.requiredSkills,
-                    "technologies" to projectCard.technologies
+                    "technologies" to projectCard.technologies,
+                    "projectIcon" to projectCard.projectIcon,
                 )
 
-                // Список полей для обновления
                 val fieldsToUpdate = listOf(
                     "name",
                     "shortDescription",
                     "longDescription",
                     "lookingFor",
                     "requiredSkills",
-                    "technologies"
+                    "technologies",
+                    "projectIcon"
                 )
 
-                // Обновляем только изменяемые поля
-                documentRef.set(updatedFields, SetOptions.mergeFields(fieldsToUpdate)).await()
+                projectDocumentRef.set(updatedFields, SetOptions.mergeFields(fieldsToUpdate)).await()
+
+                if (chatToEdit.exists()){
+                    val updatedFields = mapOf(
+                        "projectName" to projectCard.name,
+                        "projectIcon" to projectCard.projectIcon,
+                    )
+                    val fieldsToUpdate = listOf(
+                        "projectName",
+                        "projectIcon"
+                    )
+                    chatDocumentRef.set(updatedFields, SetOptions.mergeFields(fieldsToUpdate)).await()
+                }
+
                 Result.success("Project updated successfully")
             } else {
                 Result.failure(Exception("Project not found"))
             }
+
+
         } catch (e: Exception) {
             Result.failure(e)
+        }
+    }
+
+    override suspend fun unFollowUserFromProject(
+        userId: String,
+        projectId: String
+    ): Result<String> {
+        try {
+
+            dataBase.collection("Users").document(userId)
+                .update("projectsAccepted", FieldValue.arrayRemove(projectId))
+
+            dataBase.collection("Projects").document(projectId)
+                .update("usersAccepted", FieldValue.arrayRemove(userId)).await()
+            return Result.success("Пользователь исключён!")
+        }
+        catch (e: Exception){
+            return Result.failure(Exception("Ошибка!"))
+        }
+    }
+
+    override suspend fun deleteProject(
+        projectId: String
+    ): Result<String> {
+        try {
+
+            //delete chat
+            //delete users participating
+            //delete project
+
+
+            dataBase.collection("Chats").document(projectId).delete().await()
+
+            dataBase.collection("Users").get().await().forEach { doc ->
+                if (doc.get("projectsAccepted")?.let { it as? List<*> }?.contains(projectId) == true){
+                    doc.reference.update(
+                        "projectsAccepted", FieldValue.arrayRemove(projectId)
+                    ).await()
+                }
+            }
+
+            dataBase.collection("Users").get().await().forEach { doc ->
+                if (doc.get("projectsApplications")?.let { it as? List<*> }?.contains(projectId) == true){
+                    doc.reference.update(
+                        "projectsApplications", FieldValue.arrayRemove(projectId)
+                    ).await()
+                }
+            }
+
+            dataBase.collection("Users").get().await().forEach { doc ->
+                if (doc.get("projectsCreated")?.let { it as? List<*> }?.contains(projectId) == true){
+                    doc.reference.update(
+                        "projectsCreated", FieldValue.arrayRemove(projectId)
+                    ).await()
+                }
+            }
+
+            dataBase.collection("Projects").document(projectId).delete().await()
+
+            return Result.success("Проекта удалён успешно!")
+
+        }
+        catch (e: Exception){
+            return Result.failure(Exception("Ошибка!"))
         }
     }
 

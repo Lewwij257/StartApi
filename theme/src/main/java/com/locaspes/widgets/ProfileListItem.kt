@@ -1,7 +1,9 @@
 package com.locaspes.widgets
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
@@ -15,7 +17,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.rememberAsyncImagePainter
-import com.locaspes.data.model.UserProfile
+import com.locaspes.model.UserProfile
 import com.locaspes.theme.R
 
 import androidx.compose.material.icons.Icons
@@ -27,15 +29,22 @@ import com.locaspes.stellaristheme.StellarisAppTheme
 fun ProfileListItem(
     profile: UserProfile,
     showActionButtons: Boolean = false, // Параметр для отображения кнопок
-    onAccept: () -> Unit = {}, // Обработчик принятия
-    onReject: () -> Unit = {}, // Обработчик отклонения
+    onAccept: () -> Unit = {},
+    onReject: () -> Unit = {},
+    onListItmClicked: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 12.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(horizontal = 16.dp, vertical = 12.dp)
+            .clickable(
+                onClick = {
+                    Log.d("ProfileListItem", "onRowClick")
+                    onListItmClicked()
+                }
+            ),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         // Фото профиля
         Image(
@@ -111,34 +120,34 @@ fun ProfileListItem(
     }
 }
 
-@Preview
-@Composable
-fun ProfileListItemPreview() {
-    StellarisAppTheme {
-        ProfileListItem(
-            profile = UserProfile(
-                username = "kava",
-                profession = "professor",
-                avatarURL = ""
-            ),
-            showActionButtons = true,
-            onAccept = {},
-            onReject = {}
-        )
-    }
-}
-
-@Preview
-@Composable
-fun ProfileListItemNoButtonsPreview() {
-    StellarisAppTheme {
-        ProfileListItem(
-            profile = UserProfile(
-                username = "kava",
-                profession = "professor",
-                avatarURL = ""
-            ),
-            showActionButtons = false
-        )
-    }
-}
+//@Preview
+//@Composable
+//fun ProfileListItemPreview() {
+//    StellarisAppTheme {
+//        ProfileListItem(
+//            profile = UserProfile(
+//                username = "kava",
+//                profession = "professor",
+//                avatarURL = ""
+//            ),
+//            showActionButtons = true,
+//            onAccept = {},
+//            onReject = {}
+//        )
+//    }
+//}
+//
+//@Preview
+//@Composable
+//fun ProfileListItemNoButtonsPreview() {
+//    StellarisAppTheme {
+//        ProfileListItem(
+//            profile = UserProfile(
+//                username = "kava",
+//                profession = "professor",
+//                avatarURL = ""
+//            ),
+//            showActionButtons = false
+//        )
+//    }
+//}

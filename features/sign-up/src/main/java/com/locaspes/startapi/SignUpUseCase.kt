@@ -2,8 +2,8 @@ package com.locaspes.startapi
 
 import android.os.Build
 import androidx.annotation.RequiresExtension
-import com.locaspes.data.model.AuthResult
-import com.locaspes.data.model.UserProfile
+import com.locaspes.model.AuthResult
+import com.locaspes.model.UserProfile
 import com.locaspes.data.registration.FirebaseRegistrationRepository
 import com.locaspes.utils.AuthInputValidator
 import com.locaspes.utils.AuthValidationResult

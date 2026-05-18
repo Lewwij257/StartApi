@@ -1,10 +1,8 @@
 package com.locaspes.messenger
 
-import com.locaspes.data.model.ChatItem
-import com.locaspes.data.model.Message
-import com.locaspes.data.model.UserProfile
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.locaspes.model.ChatItem
+import com.locaspes.model.Message
+import com.locaspes.model.UserProfile
 
 data class MessengerUiState (
     val openChatScreen: Boolean = false,

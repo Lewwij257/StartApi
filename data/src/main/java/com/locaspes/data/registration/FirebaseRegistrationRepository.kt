@@ -6,8 +6,8 @@ import androidx.annotation.RequiresExtension
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.locaspes.data.UserDataRepository
-import com.locaspes.data.model.AuthResult
-import com.locaspes.data.model.UserProfile
+import com.locaspes.model.AuthResult
+import com.locaspes.model.UserProfile
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 

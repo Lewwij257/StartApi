@@ -1,28 +1,30 @@
 package com.locaspes.ui
 
+import android.annotation.SuppressLint
 import android.icu.text.SimpleDateFormat
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Surface
+import androidx.compose.material3.SnackbarDuration
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -30,37 +32,41 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import com.locaspes.FeedUseCase
-import com.locaspes.data.feed.FirebaseFeedRepository
-import com.locaspes.data.model.ProjectCard
-import com.locaspes.data.user.FirebaseUserActionsRepository
+import com.locaspes.model.ProjectCard
 import com.locaspes.widgets.MainProjectCard
 import com.locaspes.widgets.ProfileListItem
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import java.util.Locale
-import kotlin.math.log
+import kotlin.coroutines.CoroutineContext
 
+@SuppressLint("StateFlowValueCalledInComposition")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FeedScreen(viewModel: FeedViewModel){
+fun FeedScreen(
+    viewModel: IFeedViewModel
+){
 
     var selectedProject by remember { mutableStateOf<ProjectCard?>(null)}
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
     val uiState by viewModel.uiState.collectAsState()
+    val snackBarHostState = remember { SnackbarHostState() }
+
+    val toastContext = LocalContext.current
 
     //10 readings!!! too much for screen switch
 //    LaunchedEffect(Unit) {
@@ -74,6 +80,8 @@ fun FeedScreen(viewModel: FeedViewModel){
         }
     }
 
+
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -83,17 +91,31 @@ fun FeedScreen(viewModel: FeedViewModel){
             modifier = Modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.background)
+                .clickable{
+                    Toast.makeText(toastContext, "Сервера ещё слабоваты, но скоро всё заработает!",
+                        Toast.LENGTH_SHORT).show()
+                }
+
         ) {
+            //TODO: онвальючейндж
             TextField(
                 value = uiState.search,
-                onValueChange = viewModel::updateSearch,
+                //onValueChange = viewModel::updateSearch,
+                onValueChange = {
+                    Toast.makeText(toastContext, "Сервера ещё слабоваты, но скоро всё заработает!",
+                        Toast.LENGTH_SHORT).show()
+                },
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp)
                     .background(
                         color = MaterialTheme.colorScheme.surface,
                         shape = RoundedCornerShape(20.dp)
-                    ),
+                    )
+                    .clickable{
+                        Toast.makeText(toastContext, "Сервера ещё слабоваты, но скоро всё заработает!",
+                            Toast.LENGTH_SHORT).show()
+                    },
                 colors = TextFieldDefaults.colors(
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
@@ -104,10 +126,17 @@ fun FeedScreen(viewModel: FeedViewModel){
                     Text(
                         text = "Поиск по ключевым словам",
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f))
-                }
+                },
             )
             //TODO ДОБАВИТЬ ФИЛЬТРЫ
         }
+        SnackbarHost(
+            hostState = snackBarHostState,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(16.dp)
+        )
+
 
         LazyColumn {
             itemsIndexed(uiState.projects) { index, project ->
@@ -139,7 +168,8 @@ fun FeedScreen(viewModel: FeedViewModel){
                     .fillMaxHeight()
             ) {
                 Column(
-                    modifier = Modifier.fillMaxSize()
+                    modifier = Modifier
+                        .fillMaxSize()
                         .padding(16.dp)
                 ) {
                     Text(text = selectedProject!!.name,
@@ -202,8 +232,7 @@ fun FeedScreen(viewModel: FeedViewModel){
                             SimpleDateFormat("dd.MM.yyyy HH.mm", Locale.getDefault()).format(date)
                         })
 
-                    Log.d("FeedScreen", "users accepted: ${selectedProject!!.usersAccepted}, userId: ${viewModel.userId}")
-                    if (selectedProject!!.usersAccepted.contains(viewModel.userId)) {
+                    if (selectedProject!!.usersAccepted.contains(viewModel.uiState.value.userId)) {
                         Log.d("FeedScreen", "user accepted")
                         Button(
                             onClick = {
@@ -257,7 +286,8 @@ fun FeedScreen(viewModel: FeedViewModel){
 
                     else{
                         Text("Это ваш проект!",
-                            modifier = Modifier.fillMaxWidth()
+                            modifier = Modifier
+                                .fillMaxWidth()
                                 .padding(20.dp),
                             style = MaterialTheme.typography.titleLarge,
                             textAlign = TextAlign.Center)
@@ -289,9 +319,8 @@ fun ProjectCardDescriptionListText(title: String, description: List<String>){
 }
 
 
-//@Composable
-//@Preview
-//fun FeedScreenPreview(){
-//    val viewModel: FeedViewModel
-//    FeedScreen(modifier = Modifier)
-//}
+@Composable
+@Preview
+fun FeedScreenPreview(){
+    FeedScreen(FakeFeedViewModel())
+}

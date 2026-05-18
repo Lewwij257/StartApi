@@ -74,7 +74,9 @@ dependencies {
     implementation(project(":features:sign-in"))
     implementation(project(":features:sign-up"))
     implementation(project(":features:welcome"))
-    //implementation(project(":navigation"))
+    implementation(project(":features:project_edit"))
+    implementation(project(":features:chat"))
+
     implementation(project(":core"))
 
     implementation(libs.javapoet)
@@ -85,6 +87,9 @@ dependencies {
 
     implementation("androidx.datastore:datastore-preferences:1.0.0")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+
+    implementation("com.google.code.gson:gson:2.10.1")
+
 
 
 }

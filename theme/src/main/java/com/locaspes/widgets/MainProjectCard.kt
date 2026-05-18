@@ -3,7 +3,6 @@ package com.locaspes.widgets
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,15 +18,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.locaspes.data.model.ProjectCard
+import com.locaspes.ProjectIconMapper
+import com.locaspes.model.ProjectCard
+import com.locaspes.model.ProjectIcon
 import com.locaspes.stellaristheme.StellarisAppTheme
 import com.locaspes.theme.R
-import java.util.Date
 
 @Composable
 fun MainProjectCard(
@@ -66,7 +65,7 @@ fun MainProjectCard(
                 )
 
                 Image(
-                    painter = painterResource(R.drawable.img_briefcase_selected),
+                    painter = painterResource(ProjectIconMapper.getIconId(projectCard.projectIcon)),
                     contentDescription = "type of project",
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
@@ -120,7 +119,8 @@ fun CardPreview() {
                 technologies = listOf("Kotlin", "Firebase"),
                 lookingFor = listOf("Developers", "Designers"),
                 requiredSkills = listOf("Android", "UI/UX"),
-                author = "d"
+                author = "d",
+                projectIcon = ProjectIcon.Programming
             )
         )
     }

@@ -4,9 +4,8 @@ import android.net.Uri
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.firestore.auth.User
 import com.locaspes.data.UserDataRepository
-import com.locaspes.data.model.UserProfile
+import com.locaspes.model.UserProfile
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +19,7 @@ import javax.inject.Inject
 class SettingsViewModel @Inject constructor(
     private val settingsUseCase: SettingsUseCase,
     private val userDataRepository: UserDataRepository
-) : ViewModel() {
+) : ViewModel(), ISettingsVieModel {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
     val uiState: StateFlow<SettingsUiState> = _uiState.asStateFlow()

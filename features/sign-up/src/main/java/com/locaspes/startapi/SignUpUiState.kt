@@ -1,7 +1,5 @@
 package com.locaspes.startapi
 
-import com.locaspes.data.model.Message
-
 data class SignUpUiState(
     val username: String = "",
     val email: String = "",

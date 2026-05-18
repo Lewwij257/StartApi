@@ -1,7 +1,7 @@
 package com.locaspes.ui
 
-import com.locaspes.data.model.ProjectCard
-import com.locaspes.data.model.UserProfile
+import com.locaspes.model.ProjectCard
+import com.locaspes.model.UserProfile
 
 
 data class FeedUiState (
@@ -13,5 +13,7 @@ data class FeedUiState (
     val projects: List<ProjectCard> = emptyList(),
     val hasMoreData: Boolean = false,
     val canApply: Boolean? = null,
-    val projectParticipants: List<List<UserProfile>> = emptyList()
+    val projectParticipants: List<List<UserProfile>> = emptyList(),
+
+    var userId: String = ""
     )

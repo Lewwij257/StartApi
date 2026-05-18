@@ -52,6 +52,16 @@ dependencies {
     androidTestApi(libs.androidx.espresso.core)
 
 
+    //firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+    implementation(libs.firebase.storage)
+
+
+
+
+
 
 
 

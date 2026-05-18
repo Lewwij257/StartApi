@@ -1,6 +1,6 @@
 package com.locaspes.data
 
-import com.locaspes.data.model.UserProfile
+import com.locaspes.model.UserProfile
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

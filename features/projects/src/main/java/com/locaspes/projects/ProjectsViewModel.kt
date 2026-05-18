@@ -1,29 +1,24 @@
 package com.locaspes.projects
 
 import android.util.Log
-import androidx.compose.runtime.collectAsState
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.Timestamp
-import com.locaspes.data.UserDataRepository
-import com.locaspes.data.feed.FirebaseFeedRepository
-import com.locaspes.data.model.ProjectCard
+import com.locaspes.model.ProjectCard
+import com.locaspes.model.ProjectIcon
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProjectsViewModel @Inject constructor(
-    private val projectsUseCase: ProjectsUseCase): ViewModel() {
+    private val projectsUseCase: ProjectsUseCase): ViewModel(), IProjectsViewModel {
 
     private val _uiState = MutableStateFlow(ProjectsUiState())
-    val uiState: StateFlow<ProjectsUiState> = _uiState.asStateFlow()
+    override val uiState: StateFlow<ProjectsUiState> = _uiState.asStateFlow()
 
     init {
         loadUserRelatedProjects()
@@ -31,7 +26,7 @@ class ProjectsViewModel @Inject constructor(
 
     }
 
-    fun saveEditedProject(){
+    override fun saveEditedProject(){
         viewModelScope.launch {
             val saveEditProjectResult = projectsUseCase.saveEditedProject(
                 ProjectCard(
@@ -41,7 +36,7 @@ class ProjectsViewModel @Inject constructor(
                     longDescription = uiState.value.editProjectLongDescription,
                     lookingFor = uiState.value.editProjectLookingFor.split(", ", " "),
                     requiredSkills = uiState.value.editProjectRequiredSkills.split(", ", " "),
-                    technologies = uiState.value.editProjectTechnologies.split(", ", " ")
+                    technologies = uiState.value.editProjectTechnologies.split(", ", " "),
                 )
             )
             if (saveEditProjectResult.isSuccess){
@@ -51,7 +46,7 @@ class ProjectsViewModel @Inject constructor(
     }
 
 
-    fun loadUserRelatedProjects() {
+    override fun loadUserRelatedProjects() {
         viewModelScope.launch {
             val userRelatedProjects = projectsUseCase.loadUserRelatedProjects().collect{ projects ->
                 _uiState.update { it.copy(userRelatedProjects = projects) }
@@ -59,13 +54,13 @@ class ProjectsViewModel @Inject constructor(
         }
     }
 
-    fun acceptUsersApplication(projectId: String, userId: String){
+    override fun acceptUsersApplication(projectId: String, userId: String){
         viewModelScope.launch {
             projectsUseCase.acceptUserApplication(projectId, userId)
         }
     }
 
-    fun declineUsersApplication(projectId: String, userId: String){
+    override fun declineUsersApplication(projectId: String, userId: String){
         viewModelScope.launch {
             projectsUseCase.declineUserApplication(projectId, userId)
 
@@ -74,7 +69,7 @@ class ProjectsViewModel @Inject constructor(
     }
 
 
-    fun changeCanApplyState(projectId: String){
+    override fun changeCanApplyState(projectId: String){
         viewModelScope.launch {
             try{
                 _uiState.update { it.copy( canApply = !(projectsUseCase.checkIfUserAppliedToProject(projectId))) }
@@ -85,7 +80,7 @@ class ProjectsViewModel @Inject constructor(
         }
     }
 
-    fun applyUserToProject(projectId: String){
+    override fun applyUserToProject(projectId: String){
         viewModelScope.launch {
             _uiState.update{it.copy(canApply = null)}
             projectsUseCase.applyUserToProject(projectId)
@@ -94,7 +89,7 @@ class ProjectsViewModel @Inject constructor(
         }
     }
 
-    fun cancelUserApplication(projectId: String){
+    override fun cancelUserApplication(projectId: String){
         viewModelScope.launch {
             _uiState.update{it.copy(canApply = null)}
             projectsUseCase.cancelUserApplication(projectId)
@@ -103,7 +98,7 @@ class ProjectsViewModel @Inject constructor(
         }
     }
 
-    fun createProject() {
+    override fun createProject() {
         viewModelScope.launch {
             val projectCard = ProjectCard(
                 id = "",
@@ -113,6 +108,7 @@ class ProjectsViewModel @Inject constructor(
                 lookingFor = TextParser.parseString(_uiState.value.createProjectLookingFor),
                 requiredSkills = TextParser.parseString(_uiState.value.createProjectRequiredSkills),
                 technologies = TextParser.parseString(_uiState.value.createProjectTechnologies),
+                projectIcon = _uiState.value.createProjectIcon
             )
             val isSuccessCreatingProject = projectsUseCase.createProject(projectCard)
             _uiState.update { it.copy(successCreatingProject = isSuccessCreatingProject) }
@@ -125,7 +121,8 @@ class ProjectsViewModel @Inject constructor(
                         createProjectLongDescription = "",
                         createProjectLookingFor = "",
                         createProjectRequiredSkills = "",
-                        createProjectTechnologies = ""
+                        createProjectTechnologies = "",
+
                     )
                 }
             }
@@ -134,7 +131,7 @@ class ProjectsViewModel @Inject constructor(
         }
     }
 
-    fun getProjectRelatedUsers(projectId: String){
+    override fun getProjectRelatedUsers(projectId: String){
         viewModelScope.launch {
             val projectRelatedUsersResult = projectsUseCase.getProjectRelatedUsers(projectId)
             if (projectRelatedUsersResult.isSuccess){
@@ -143,78 +140,82 @@ class ProjectsViewModel @Inject constructor(
         }
     }
 
-    fun updateCreateProjectTitle(title: String) {
+    override fun updateCreateProjectTitle(title: String) {
         _uiState.update { it.copy(createProjectTitle = title) }
     }
 
-    fun updateCreateProjectShortDescription(shortDescription: String) {
+    override fun updateCreateProjectShortDescription(shortDescription: String) {
         _uiState.update { it.copy(createProjectShortDescription = shortDescription) }
     }
 
-    fun updateCreateProjectLongDescription(longDescription: String) {
+    override fun updateCreateProjectLongDescription(longDescription: String) {
         _uiState.update { it.copy(createProjectLongDescription = longDescription) }
     }
 
-    fun updateCreateProjectLookingFor(lookingFor: String) {
+    override fun updateCreateProjectLookingFor(lookingFor: String) {
         _uiState.update { it.copy(createProjectLookingFor = lookingFor) }
     }
 
-    fun updateCreateProjectRequiredSkills(requiredSkills: String) {
+    override fun updateCreateProjectRequiredSkills(requiredSkills: String) {
         _uiState.update { it.copy(createProjectRequiredSkills = requiredSkills) }
     }
 
-    fun updateCreateProjectTechnologies(technologies: String) {
+    override fun updateCreateProjectTechnologies(technologies: String) {
         _uiState.update { it.copy(createProjectTechnologies = technologies) }
     }
 
-    fun updateProjectForEdit(project: ProjectCard){
+    override fun updateProjectForEdit(project: ProjectCard){
         _uiState.update { it.copy(projectToEdit = project) }
     }
 
-    fun updateEditProjectId(projectId: String){
+    override fun updateEditProjectId(projectId: String){
         _uiState.update { it.copy(editProjectId = projectId) }
     }
 
     //TODO:
 
-    fun updateEditProjectTitle(title: String) {
+    override fun updateEditProjectTitle(title: String) {
         _uiState.update { it.copy(editProjectTitle = title) }
         Log.d("ViewModelDebug", "Updated title: $title")
     }
 
-    fun updateEditProjectShortDescription(shortDescription: String) {
+    override fun updateEditProjectShortDescription(shortDescription: String) {
         _uiState.update { it.copy(editProjectShortDescription = shortDescription) }
     }
 
-    fun updateEditProjectLongDescription(longDescription: String) {
+    override fun updateEditProjectLongDescription(longDescription: String) {
         _uiState.update { it.copy(editProjectLongDescription = longDescription) }
     }
 
-    fun updateEditProjectLookingFor(lookingFor: String) {
+    override fun updateEditProjectLookingFor(lookingFor: String) {
         _uiState.update { it.copy(editProjectLookingFor = lookingFor) }
     }
 
-    fun updateEditProjectRequiredSkills(requiredSkills: String) {
+    override fun updateEditProjectRequiredSkills(requiredSkills: String) {
         _uiState.update { it.copy(editProjectRequiredSkills = requiredSkills) }
     }
 
-    fun updateEditProjectTechnologies(technologies: String) {
+    override fun updateEditProjectTechnologies(technologies: String) {
         _uiState.update { it.copy(editProjectTechnologies = technologies) }
     }
 
-    fun updateEditProjectApplies(applies: List<String>) {
+    override fun updateEditProjectApplies(applies: List<String>) {
         _uiState.update { it.copy(editProjectApplies = applies) }
     }
 
-    fun updateEditProjectAccepted(accepted: List<String>) {
+    override fun updateEditProjectAccepted(accepted: List<String>) {
         _uiState.update { it.copy(editProjectAccepted = accepted) }
     }
 
-    fun updateEditProjectCreator(creator: String) {
+    override fun updateEditProjectCreator(creator: String) {
         _uiState.update { it.copy(editProjectCreator = creator) }
     }
 
-    fun updateSelectedProject(project: ProjectCard){
+    override fun updateSelectedProject(project: ProjectCard){
         _uiState.update { it.copy(selectedProject = project) }
+    }
+
+    override fun updateSelectedIcon(projectIcon: ProjectIcon) {
+        _uiState.update { it.copy(createProjectIcon = projectIcon) }
     }
 }

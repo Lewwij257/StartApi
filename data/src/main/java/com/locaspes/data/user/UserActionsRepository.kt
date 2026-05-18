@@ -1,10 +1,9 @@
 package com.locaspes.data.user
 
-import com.google.firebase.firestore.auth.User
-import com.locaspes.data.model.ChatItem
-import com.locaspes.data.model.Message
-import com.locaspes.data.model.ProjectCard
-import com.locaspes.data.model.UserProfile
+import com.locaspes.model.ChatItem
+import com.locaspes.model.Message
+import com.locaspes.model.ProjectCard
+import com.locaspes.model.UserProfile
 import kotlinx.coroutines.flow.Flow
 
 interface UserActionsRepository {
@@ -22,4 +21,8 @@ interface UserActionsRepository {
     suspend fun getUserChats(): Result<List<ChatItem>>
     suspend fun checkUserAcceptedToProject(projectId: String): Boolean
     suspend fun saveEditedProject(projectCard: ProjectCard): Result<String>
+
+    suspend fun unFollowUserFromProject(userId: String, projectId: String): Result<String>
+
+    suspend fun deleteProject(projectId: String): Result<String>
 }
